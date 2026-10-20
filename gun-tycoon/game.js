@@ -706,7 +706,7 @@ function buildHtml() {
   }).join('');
 }
 function skillHtml() {
-  return `<p class="sp-note">스킬 포인트 <b>${S.sp}</b> · 매일 아침 1점, 엘리트를 잡으면 1점을 더 얻습니다. 앞 칸을 배워야 다음 칸이 열립니다.</p><div class="tree">` + BRANCHES.map(br => `<div class="branch"><h4>${br}</h4>` + SKILLS.filter(s => s.branch === br).map(s => {
+  return `<p class="sp-note">Skill points <b>${S.sp}</b> · +1 each morning and +1 per elite kill. Unlock the previous node to open the next.</p><div class="tree">` + BRANCHES.map(br => `<div class="branch"><h4>${br}</h4>` + SKILLS.filter(s => s.branch === br).map(s => {
     const have = !!S.skills[s.id], open = s.requires.every(r => S.skills[r]);
     const cls = have ? 'max' : !open ? 'locked' : S.sp >= s.cost ? 'can' : '';
     const req = s.requires.length ? `<em>필요: ${s.requires.map(r => SKILLS.find(x => x.id === r).name).join(', ')}</em>` : '';
@@ -728,7 +728,7 @@ function hubAction(act) {
   } else if (kind === 'sk') {
     const s = SKILLS.find(x => x.id === id);
     if (S.skills[id] || S.sp < s.cost || !s.requires.every(r => S.skills[r])) return deny();
-    S.sp -= s.cost; S.skills[id] = true; sfx('upgrade'); toast(`${s.name} 습득`, 'gold');
+    S.sp -= s.cost; S.skills[id] = true; sfx('upgrade'); toast(`${s.name} unlocked`, 'gold');
   }
   refreshEff(); save();
   if (mode === 'hub' && !bot.on) {

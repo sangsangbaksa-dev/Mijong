@@ -1163,18 +1163,18 @@
   "skills": [
     {
       "id": "s1",
-      "branch": "사격",
+      "branch": "GUNPLAY",
       "name": "Steady Hands",
       "cost": 1,
       "requires": [],
       "effect": {
         "dmgMult": 1.15
       },
-      "desc": "피해 +15%"
+      "desc": "Damage +15%"
     },
     {
       "id": "s2",
-      "branch": "사격",
+      "branch": "GUNPLAY",
       "name": "Quickdraw",
       "cost": 1,
       "requires": [
@@ -1183,11 +1183,11 @@
       "effect": {
         "rateMult": 1.12
       },
-      "desc": "연사력 +12%"
+      "desc": "Fire rate +12%"
     },
     {
       "id": "s3",
-      "branch": "사격",
+      "branch": "GUNPLAY",
       "name": "Headhunter",
       "cost": 2,
       "requires": [
@@ -1196,11 +1196,11 @@
       "effect": {
         "crit": 0.1
       },
-      "desc": "치명타 확률 +10%"
+      "desc": "Crit chance +10%"
     },
     {
       "id": "s4",
-      "branch": "사격",
+      "branch": "GUNPLAY",
       "name": "Piercing Rounds",
       "cost": 2,
       "requires": [
@@ -1209,11 +1209,11 @@
       "effect": {
         "pierce": 1
       },
-      "desc": "모든 총 관통 +1"
+      "desc": "Pierce +1"
     },
     {
       "id": "s5",
-      "branch": "사격",
+      "branch": "GUNPLAY",
       "name": "Lethal Edge",
       "cost": 2,
       "requires": [
@@ -1222,11 +1222,11 @@
       "effect": {
         "critDmg": 0.75
       },
-      "desc": "치명타 피해 +75%"
+      "desc": "Crit damage +75%"
     },
     {
       "id": "s6",
-      "branch": "사격",
+      "branch": "GUNPLAY",
       "name": "Ammo Saver",
       "cost": 3,
       "requires": [
@@ -1235,11 +1235,11 @@
       "effect": {
         "rateMult": 1.2
       },
-      "desc": "15% 확률로 탄 소모 없음(연사 +20% 환산)"
+      "desc": "Fire rate +20%"
     },
     {
       "id": "s7",
-      "branch": "사격",
+      "branch": "GUNPLAY",
       "name": "Slaughterer",
       "cost": 3,
       "requires": [
@@ -1249,11 +1249,11 @@
       "effect": {
         "dmgMult": 1.4
       },
-      "desc": "피해 +40%"
+      "desc": "Damage +40%"
     },
     {
       "id": "s8",
-      "branch": "사격",
+      "branch": "GUNPLAY",
       "name": "Giant Slayer",
       "cost": 4,
       "requires": [
@@ -1262,22 +1262,22 @@
       "effect": {
         "bossDmgMult": 1.6
       },
-      "desc": "엘리트·보스 피해 +60%"
+      "desc": "Boss damage +60%"
     },
     {
       "id": "v1",
-      "branch": "생존",
+      "branch": "SURVIVAL",
       "name": "Tough Body",
       "cost": 1,
       "requires": [],
       "effect": {
         "hpFlat": 40
       },
-      "desc": "최대 체력 +40"
+      "desc": "Max HP +40"
     },
     {
       "id": "v2",
-      "branch": "생존",
+      "branch": "SURVIVAL",
       "name": "Combat Roll",
       "cost": 1,
       "requires": [
@@ -1286,11 +1286,11 @@
       "effect": {
         "dodge": 0.08
       },
-      "desc": "스페이스로 구르기, 받는 피해 -8% 환산"
+      "desc": "Damage taken -8%"
     },
     {
       "id": "v3",
-      "branch": "생존",
+      "branch": "SURVIVAL",
       "name": "Vampire Rounds",
       "cost": 2,
       "requires": [
@@ -1299,11 +1299,11 @@
       "effect": {
         "lifesteal": 0.01
       },
-      "desc": "준 피해의 1%만큼 회복(최대 초당 5)"
+      "desc": "Lifesteal 1%"
     },
     {
       "id": "v4",
-      "branch": "생존",
+      "branch": "SURVIVAL",
       "name": "Steel Skin",
       "cost": 2,
       "requires": [
@@ -1312,11 +1312,11 @@
       "effect": {
         "armorFlat": 30
       },
-      "desc": "방어 +30"
+      "desc": "Armor +30"
     },
     {
       "id": "v5",
-      "branch": "생존",
+      "branch": "SURVIVAL",
       "name": "Adrenaline",
       "cost": 2,
       "requires": [
@@ -1325,11 +1325,11 @@
       "effect": {
         "hpMult": 1.25
       },
-      "desc": "최대 체력 +25%"
+      "desc": "Max HP +25%"
     },
     {
       "id": "v6",
-      "branch": "생존",
+      "branch": "SURVIVAL",
       "name": "Second Chance",
       "cost": 3,
       "requires": [
@@ -1339,11 +1339,11 @@
       "effect": {
         "revive": 1
       },
-      "desc": "밤마다 1회 체력 50%로 부활"
+      "desc": "Revive once per night"
     },
     {
       "id": "v7",
-      "branch": "생존",
+      "branch": "SURVIVAL",
       "name": "Unbreakable",
       "cost": 4,
       "requires": [
@@ -1353,22 +1353,22 @@
         "hpMult": 1.4,
         "armorFlat": 40
       },
-      "desc": "최대 체력 +40%, 방어 +40"
+      "desc": "Max HP +40% · Armor +40"
     },
     {
       "id": "p1",
-      "branch": "생산",
+      "branch": "ECONOMY",
       "name": "Hustler",
       "cost": 1,
       "requires": [],
       "effect": {
         "gatherMult": 1.25
       },
-      "desc": "채집 속도 +25%"
+      "desc": "Gather speed +25%"
     },
     {
       "id": "p2",
-      "branch": "생산",
+      "branch": "ECONOMY",
       "name": "Magnet Gloves",
       "cost": 1,
       "requires": [
@@ -1378,11 +1378,11 @@
         "pickupMult": 2.0,
         "goldMult": 1.1
       },
-      "desc": "줍기 범위 x2, 골드 +10%"
+      "desc": "Pickup range x2 · Gold +10%"
     },
     {
       "id": "p3",
-      "branch": "생산",
+      "branch": "ECONOMY",
       "name": "Dealmaker",
       "cost": 2,
       "requires": [
@@ -1391,11 +1391,11 @@
       "effect": {
         "shopDiscount": 0.9
       },
-      "desc": "상점 가격 -10%"
+      "desc": "Shop prices -10%"
     },
     {
       "id": "p4",
-      "branch": "생산",
+      "branch": "ECONOMY",
       "name": "Bounty Hunter",
       "cost": 2,
       "requires": [
@@ -1404,11 +1404,11 @@
       "effect": {
         "goldMult": 1.3
       },
-      "desc": "처치 골드 +30%"
+      "desc": "Gold +30%"
     },
     {
       "id": "p5",
-      "branch": "생산",
+      "branch": "ECONOMY",
       "name": "Factory Boss",
       "cost": 2,
       "requires": [
@@ -1417,11 +1417,11 @@
       "effect": {
         "buildingMult": 1.5
       },
-      "desc": "건물 생산량 +50%"
+      "desc": "Building output +50%"
     },
     {
       "id": "p6",
-      "branch": "생산",
+      "branch": "ECONOMY",
       "name": "Long Day",
       "cost": 3,
       "requires": [
@@ -1431,11 +1431,11 @@
       "effect": {
         "dayBonusSec": 30
       },
-      "desc": "낮 시간 +30초"
+      "desc": "Day +30s"
     },
     {
       "id": "p7",
-      "branch": "생산",
+      "branch": "ECONOMY",
       "name": "Arms Tycoon",
       "cost": 4,
       "requires": [
@@ -1445,7 +1445,247 @@
         "goldMult": 1.5,
         "buildingMult": 1.5
       },
-      "desc": "골드·건물 생산 +50%"
+      "desc": "Gold +50% · Building output +50%"
+    },
+    {
+      "id": "s9",
+      "branch": "GUNPLAY",
+      "name": "Hot Barrel",
+      "cost": 2,
+      "requires": [
+        "s2"
+      ],
+      "effect": {
+        "rateMult": 1.1
+      },
+      "desc": "Fire rate +10%"
+    },
+    {
+      "id": "s10",
+      "branch": "GUNPLAY",
+      "name": "Hollow Points",
+      "cost": 2,
+      "requires": [
+        "s1"
+      ],
+      "effect": {
+        "dmgMult": 1.12
+      },
+      "desc": "Damage +12%"
+    },
+    {
+      "id": "s11",
+      "branch": "GUNPLAY",
+      "name": "Ricochet",
+      "cost": 3,
+      "requires": [
+        "s4"
+      ],
+      "effect": {
+        "pierce": 1
+      },
+      "desc": "Pierce +1"
+    },
+    {
+      "id": "s12",
+      "branch": "GUNPLAY",
+      "name": "Deadeye",
+      "cost": 3,
+      "requires": [
+        "s3"
+      ],
+      "effect": {
+        "crit": 0.12
+      },
+      "desc": "Crit chance +12%"
+    },
+    {
+      "id": "s13",
+      "branch": "GUNPLAY",
+      "name": "Executioner",
+      "cost": 3,
+      "requires": [
+        "s5"
+      ],
+      "effect": {
+        "critDmg": 0.5
+      },
+      "desc": "Crit damage +50%"
+    },
+    {
+      "id": "s14",
+      "branch": "GUNPLAY",
+      "name": "Overkill",
+      "cost": 4,
+      "requires": [
+        "s9",
+        "s11"
+      ],
+      "effect": {
+        "dmgMult": 1.2,
+        "rateMult": 1.1
+      },
+      "desc": "Damage +20% · Fire rate +10%"
+    },
+    {
+      "id": "v8",
+      "branch": "SURVIVAL",
+      "name": "Second Wind",
+      "cost": 2,
+      "requires": [
+        "v1"
+      ],
+      "effect": {
+        "hpFlat": 30
+      },
+      "desc": "Max HP +30"
+    },
+    {
+      "id": "v9",
+      "branch": "SURVIVAL",
+      "name": "Bloodthirst",
+      "cost": 3,
+      "requires": [
+        "v3"
+      ],
+      "effect": {
+        "lifesteal": 0.01
+      },
+      "desc": "Lifesteal 1%"
+    },
+    {
+      "id": "v10",
+      "branch": "SURVIVAL",
+      "name": "Evasive",
+      "cost": 2,
+      "requires": [
+        "v2"
+      ],
+      "effect": {
+        "dodge": 0.06
+      },
+      "desc": "Damage taken -6%"
+    },
+    {
+      "id": "v11",
+      "branch": "SURVIVAL",
+      "name": "Plated Vest",
+      "cost": 3,
+      "requires": [
+        "v4"
+      ],
+      "effect": {
+        "armorFlat": 25
+      },
+      "desc": "Armor +25"
+    },
+    {
+      "id": "v12",
+      "branch": "SURVIVAL",
+      "name": "Iron Will",
+      "cost": 3,
+      "requires": [
+        "v5"
+      ],
+      "effect": {
+        "hpMult": 1.15
+      },
+      "desc": "Max HP +15%"
+    },
+    {
+      "id": "v13",
+      "branch": "SURVIVAL",
+      "name": "Last Stand",
+      "cost": 4,
+      "requires": [
+        "v10",
+        "v12"
+      ],
+      "effect": {
+        "armorFlat": 30,
+        "dodge": 0.05
+      },
+      "desc": "Armor +30 · Damage taken -5%"
+    },
+    {
+      "id": "p8",
+      "branch": "ECONOMY",
+      "name": "Scavenger",
+      "cost": 2,
+      "requires": [
+        "p1"
+      ],
+      "effect": {
+        "gatherMult": 1.2
+      },
+      "desc": "Gather speed +20%"
+    },
+    {
+      "id": "p9",
+      "branch": "ECONOMY",
+      "name": "Haggler",
+      "cost": 2,
+      "requires": [
+        "p3"
+      ],
+      "effect": {
+        "shopDiscount": 0.92
+      },
+      "desc": "Shop prices -8%"
+    },
+    {
+      "id": "p10",
+      "branch": "ECONOMY",
+      "name": "Gold Rush",
+      "cost": 3,
+      "requires": [
+        "p4"
+      ],
+      "effect": {
+        "goldMult": 1.15
+      },
+      "desc": "Gold +15%"
+    },
+    {
+      "id": "p11",
+      "branch": "ECONOMY",
+      "name": "Workshop",
+      "cost": 3,
+      "requires": [
+        "p5"
+      ],
+      "effect": {
+        "buildingMult": 1.25
+      },
+      "desc": "Building output +25%"
+    },
+    {
+      "id": "p12",
+      "branch": "ECONOMY",
+      "name": "Daybreak",
+      "cost": 3,
+      "requires": [
+        "p6"
+      ],
+      "effect": {
+        "dayBonusSec": 15
+      },
+      "desc": "Day +15s"
+    },
+    {
+      "id": "p13",
+      "branch": "ECONOMY",
+      "name": "Magnate",
+      "cost": 4,
+      "requires": [
+        "p9",
+        "p11"
+      ],
+      "effect": {
+        "goldMult": 1.2,
+        "shopDiscount": 0.92
+      },
+      "desc": "Gold +20% · Shop prices -8%"
     }
   ],
   "simulation": {
