@@ -404,7 +404,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
         const fly = ud.fly ? ud.fly + Math.sin(e.ph * 0.6) * 0.25 : 0;
         const hop = ud.fly ? 0 : Math.abs(Math.sin(e.ph * 0.9)) * 0.12;
         s.position.set(e.x * M, fly + hop, e.y * M);
-        const size = ud.size * (e.elite ? 1 : 1) * (e.boss ? 1 + Math.sin(t * 2) * 0.02 : 1);
+        const size = ud.size * (e.elite ? 1 : 1) * (e.boss ? 1.5 * (1 + Math.sin(t * 2) * 0.02) : 1);
         s.scale.set(e.face < 0 ? -size : size, size, 1);
         // 밤에는 빛이 닿는 곳만 보인다
         const dx = e.x - p.x, dy = e.y - p.y, d = Math.hypot(dx, dy) || 1;
@@ -413,7 +413,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
         const cone = (dx * torchDir.x + dy * torchDir.y) / d;
         if (cone > 0.82) L += Math.max(0, 1 - d / (TORCH.distance / M)) * nightK * 1.1;
         const dc = Math.hypot(e.x - CAMP.x, e.y - CAMP.y); L += Math.max(0, 1 - dc / 420) * nightK * 0.8;
-        if (e.boss) L = Math.max(L, 0.75);
+        if (e.boss) L = 1;
         L = Math.min(1, L);
         if (e.hit > 0) tmpC.setRGB(1, 1, 1); else tmpC.copy(ud.tint).multiplyScalar(L);
         s.material.color.copy(tmpC);
@@ -422,7 +422,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
         if (e.boss) bossV = e;
       }
       for (const [id, v] of monViews) if (v.seen !== t) { scene.remove(v.s); v.s.material.dispose(); monViews.delete(id); }
-      bossLight.intensity = bossV ? 6 : 0; if (bossV) bossLight.position.set(bossV.x * M, 3, bossV.y * M);
+      bossLight.intensity = bossV ? 14 : 0; if (bossV) bossLight.position.set(bossV.x * M, 3, bossV.y * M);
       // 줍는 것
       R.drops.forEach((d, i) => {
         let s = dropPool[i];
