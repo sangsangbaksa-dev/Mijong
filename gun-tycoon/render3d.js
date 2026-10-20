@@ -332,12 +332,13 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
 
     // 카메라
     if (live) {
-      const p = R.p, lead = 1.6;
+      const p = R.p, yaw = ctx.yaw ?? -Math.PI / 2, lead = ctx.locked ? 4.5 : 1.6;
       const tx = p.x * M + Math.cos(p.ang) * lead, tz = p.y * M + Math.sin(p.ang) * lead;
       const want = new THREE.Vector3(tx, 0, tz);
-      camLook.lerp(want, Math.min(1, dt * 6));
-      const dist = W2 < 720 ? 1.25 : 1;
-      camPos.set(camLook.x, 19 * dist, camLook.z + 12.5 * dist);
+      camLook.lerp(want, Math.min(1, dt * (ctx.locked ? 14 : 6)));
+      const dist = W2 < 720 ? 1.25 : 1, back = (ctx.locked ? 11 : 12.5) * dist;
+      // 카메라는 바라보는 방향 뒤쪽 위에 선다 (잠금 전에는 북쪽 고정)
+      camPos.set(camLook.x - Math.cos(yaw) * back, (ctx.locked ? 15 : 19) * dist, camLook.z - Math.sin(yaw) * back);
       if (R.shake > 0.5) camPos.add(new THREE.Vector3((Math.random() - 0.5) * R.shake * 0.05, 0, (Math.random() - 0.5) * R.shake * 0.05));
     } else {
       const a = t * 0.05;
@@ -526,6 +527,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
       octx.lineWidth = 3; octx.strokeStyle = '#000'; octx.strokeText(qq.txt, s.x, s.y); octx.fillStyle = qq.col; octx.fillText(qq.txt, s.x, s.y);
     }
     octx.globalAlpha = 1;
+    if (!ctx.locked && ctx.aim && !R.over) { octx.font = '700 13px "Noto Sans KR", sans-serif'; octx.textAlign = 'center'; octx.fillStyle = 'rgba(255,255,255,.85)'; octx.fillText('화면을 클릭하면 마우스가 가운데에 고정되고, 마우스로 방향을 돌립니다', W2 / 2, H2 - 28); }
     // 조준점
     if (ctx.aim) {
       const m = ctx.aim; octx.strokeStyle = 'rgba(255,255,255,.9)'; octx.lineWidth = 2;

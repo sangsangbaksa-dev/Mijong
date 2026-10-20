@@ -550,6 +550,8 @@ const mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false };
 const joy = { id: null, ox: 0, oy: 0, x: 0, y: 0 };
 let touchMode = matchMedia('(pointer: coarse)').matches;
 const bot = { on: false, fast: false };
+let locked = false;
+const SENS = 0.0035;
 const input = {
   dash: false, reload: false,
   move() {
@@ -559,10 +561,15 @@ const input = {
     if (keys.KeyA || keys.ArrowLeft) x -= 1; if (keys.KeyD || keys.ArrowRight) x += 1;
     if (joy.id !== null) { x = joy.x; y = joy.y; }
     const m = Math.hypot(x, y); if (m > 1) { x /= m; y /= m; }
+    if (locked && R) { // 바라보는(쏘는) 방향 기준: W 앞, S 뒤, A 왼쪽, D 오른쪽
+      const a = R.p.ang, fx = Math.cos(a), fy = Math.sin(a), rx = -fy, ry = fx, fwd = -y, side = x;
+      return { x: fx * fwd + rx * side, y: fy * fwd + ry * side };
+    }
     return { x, y };
   },
   aimTarget() {
     if (touchMode || bot.on) { const t = autoTarget(); if (t) return lead(t); const p = R.p; return { x: p.x + Math.cos(p.ang) * 100, y: p.y + Math.sin(p.ang) * 100 }; }
+    if (locked) { const p = R.p; return { x: p.x + Math.cos(p.ang) * 100, y: p.y + Math.sin(p.ang) * 100 }; }
     return view.screenToGround(mouse.x, mouse.y) || { x: R.p.x + 1, y: R.p.y };
   },
   firing() { return touchMode || bot.on ? !!autoTarget() : mouse.down; },
@@ -631,6 +638,7 @@ const costHtml = c => Object.keys(c).length ? Object.keys(c).map(k => `<span cla
 const gunCost = g => { const c = {}; for (const k in g.cost) c[k] = Math.ceil(g.cost[k] * (k === 'gold' ? E.shopDiscount : 1)); return c; };
 
 function goHub() {
+  if (document.pointerLockElement) document.exitPointerLock();
   mode = 'hub'; R = null; paused = false;
   $('hud').hidden = true; $('joy').hidden = true; $('dashBtn').hidden = true;
   $('hub').hidden = false; $('title').hidden = true; $('modal').hidden = true;
@@ -766,7 +774,7 @@ function setPause(v) {
   if (mode !== 'run' || !R || R.over) return;
   paused = v;
   if (v) showModal(`<h2>일시정지</h2><p>${R.boss ? '보스전' : S.day + '일차'} 진행 중입니다.</p><div class="acts"><button class="gt-btn gt-btn--primary" data-act="resume">계속</button><button class="gt-btn gt-btn--ghost" data-act="mute">${Snd.isMuted() ? '소리 켜기' : '소리 끄기'}</button><button class="gt-btn gt-btn--ghost" data-act="giveup">${R.boss ? '포기하고 캠프로' : '오늘은 접고 캠프로'}</button></div>`);
-  else $('modal').hidden = true;
+  else { $('modal').hidden = true; lockPointer(); }
 }
 document.addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b) return;
@@ -808,9 +816,20 @@ window.addEventListener('keydown', ev => {
 window.addEventListener('keyup', ev => { keys[ev.code] = false; });
 window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; mouse.down = false; if (mode === 'run' && !paused) setPause(true); });
 const cv = $('ov');
-cv.addEventListener('pointermove', ev => { if (ev.pointerType === 'mouse') { mouse.x = ev.clientX; mouse.y = ev.clientY; touchMode = false; } });
+cv.addEventListener('pointermove', ev => {
+  if (ev.pointerType !== 'mouse') return;
+  touchMode = false;
+  if (locked) { if (R && mode === 'run' && !paused) R.p.ang += ev.movementX * SENS; return; }
+  mouse.x = ev.clientX; mouse.y = ev.clientY;
+});
+// 마우스를 화면 가운데에 고정한다 (포인터 잠금). ESC로 풀리면 일시정지
+function lockPointer() { if (touchMode || locked || mode !== 'run') return; try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
+document.addEventListener('pointerlockchange', () => {
+  locked = document.pointerLockElement === cv;
+  if (!locked && mode === 'run' && R && !R.over && !paused) setPause(true);
+});
 cv.addEventListener('pointerdown', ev => {
-  if (ev.pointerType === 'mouse') { mouse.down = ev.button === 0; mouse.x = ev.clientX; mouse.y = ev.clientY; touchMode = false; $('dashBtn').hidden = true; return; }
+  if (ev.pointerType === 'mouse') { mouse.down = ev.button === 0; if (!locked) { mouse.x = ev.clientX; mouse.y = ev.clientY; lockPointer(); } touchMode = false; $('dashBtn').hidden = true; return; }
   touchMode = true; if (mode === 'run') $('dashBtn').hidden = false;
   if (joy.id === null) { joy.id = ev.pointerId; joy.ox = ev.clientX; joy.oy = ev.clientY; joy.x = joy.y = 0; const j = $('joy'); j.hidden = mode !== 'run'; j.style.left = ev.clientX + 'px'; j.style.top = ev.clientY + 'px'; j.firstElementChild.style.transform = 'translate(-50%,-50%)'; }
   try { cv.setPointerCapture(ev.pointerId); } catch (e) {}
@@ -868,7 +887,7 @@ let last = performance.now();
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (mode === 'run' && !paused && R && !R.over) { step(dt); hudT += dt; if (hudT > 0.1) { hudT = 0; updateHud(); } }
-  view.render(dt, { mode, R, S, aim: !touchMode && mode === 'run' ? mouse : null, gun: S.gun, gunIcon: GUN_ICON[S.gun], eff: E, lamps: bLv('lamp') });
+  view.render(dt, { mode, R, S, locked, yaw: locked && R ? R.p.ang : -Math.PI / 2, aim: !touchMode && mode === 'run' ? (locked ? { x: innerWidth / 2, y: innerHeight * 0.42 } : mouse) : null, gun: S.gun, gunIcon: GUN_ICON[S.gun], eff: E, lamps: bLv('lamp') });
   requestAnimationFrame(frame);
 }
 hasSave = load();
