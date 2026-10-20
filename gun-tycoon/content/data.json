@@ -71,7 +71,7 @@
   "dayResources": [
     {
       "id": "scrap",
-      "name": "고철 더미",
+      "name": "Scrap Heap",
       "gives": "고철",
       "amount": [
         3,
@@ -83,7 +83,7 @@
     },
     {
       "id": "car",
-      "name": "부서진 차량",
+      "name": "Wrecked Car",
       "gives": "고철",
       "amount": [
         12,
@@ -95,7 +95,7 @@
     },
     {
       "id": "ammo",
-      "name": "보급 상자",
+      "name": "Supply Crate",
       "gives": "골드",
       "amount": [
         20,
@@ -108,7 +108,7 @@
     },
     {
       "id": "crystal",
-      "name": "빛나는 결정",
+      "name": "Glow Crystal",
       "gives": "크리스탈",
       "amount": [
         1,
@@ -123,7 +123,7 @@
   "monsters": [
     {
       "id": "dog",
-      "name": "굶주린 들개",
+      "name": "Feral Hound",
       "hp": 14,
       "dmg": 4,
       "speed": 170,
@@ -134,7 +134,7 @@
     },
     {
       "id": "zombie",
-      "name": "썩은 좀비",
+      "name": "Rotwalker",
       "hp": 34,
       "dmg": 6,
       "speed": 70,
@@ -145,7 +145,7 @@
     },
     {
       "id": "boar",
-      "name": "돌연변이 멧돼지",
+      "name": "Mutant Boar",
       "hp": 63,
       "dmg": 12,
       "speed": 130,
@@ -156,7 +156,7 @@
     },
     {
       "id": "bugs",
-      "name": "독침 벌레 떼",
+      "name": "Stinger Swarm",
       "hp": 8,
       "dmg": 3,
       "speed": 150,
@@ -167,7 +167,7 @@
     },
     {
       "id": "crab",
-      "name": "갑각 괴수",
+      "name": "Shellback",
       "hp": 196,
       "dmg": 18,
       "speed": 60,
@@ -178,7 +178,7 @@
     },
     {
       "id": "wolf",
-      "name": "그림자 늑대",
+      "name": "Shadow Wolf",
       "hp": 77,
       "dmg": 14,
       "speed": 230,
@@ -189,7 +189,7 @@
     },
     {
       "id": "shroom",
-      "name": "폭발 버섯",
+      "name": "Boomshroom",
       "hp": 49,
       "dmg": 40,
       "speed": 90,
@@ -200,7 +200,7 @@
     },
     {
       "id": "ogre",
-      "name": "철갑 오우거",
+      "name": "Iron Ogre",
       "hp": 588,
       "dmg": 35,
       "speed": 55,
@@ -211,7 +211,7 @@
     },
     {
       "id": "wraith",
-      "name": "밤의 망령",
+      "name": "Night Wraith",
       "hp": 126,
       "dmg": 20,
       "speed": 120,
@@ -224,42 +224,42 @@
   "elites": [
     {
       "id": "alpha_dog",
-      "name": "우두머리 들개 '송곳니'",
+      "name": "Fang, the Alpha",
       "night": 5,
       "base": "dog",
       "trait": "부하 들개 10마리 소환"
     },
     {
       "id": "king_boar",
-      "name": "멧돼지 왕",
+      "name": "Boar King",
       "night": 10,
       "base": "boar",
       "trait": "연속 돌진 3회"
     },
     {
       "id": "queen_bug",
-      "name": "벌레 여왕",
+      "name": "Hive Queen",
       "night": 15,
       "base": "bugs",
       "trait": "죽을 때 벌레 떼 20마리"
     },
     {
       "id": "grey_ogre",
-      "name": "회색 오우거",
+      "name": "Grey Ogre",
       "night": 20,
       "base": "ogre",
       "trait": "바닥 내려찍기(범위 기절)"
     },
     {
       "id": "wraith_lord",
-      "name": "망령 군주",
+      "name": "Wraith Lord",
       "night": 25,
       "base": "wraith",
       "trait": "분신 3체"
     },
     {
       "id": "nightmare",
-      "name": "악몽의 사도",
+      "name": "Herald of Nightmares",
       "night": 30,
       "base": "wraith",
       "trait": "30일 이후 5일마다 반복 등장"
@@ -765,7 +765,7 @@
   ],
   "boss": {
     "id": "blood_moon_lord",
-    "name": "붉은 달의 군주",
+    "name": "Lord of the Blood Moon",
     "desc": "허브의 '보스에 도전하기'로 언제든 도전. 이기면 엔딩, 지면 허브로 돌아오고 날짜는 그대로.",
     "hp": 21894000,
     "contactDmg": 137,
@@ -776,7 +776,7 @@
     "phases": [
       {
         "hpAbove": 0.66,
-        "name": "1페이즈: 사냥",
+        "name": "Phase 1: The Hunt",
         "pattern": [
           "플레이어를 향해 걸어오며 부채꼴 핏방울 8발",
           "4초마다 짧은 돌진"
@@ -784,7 +784,7 @@
       },
       {
         "hpAbove": 0.33,
-        "name": "2페이즈: 붉은 달",
+        "name": "Phase 2: Blood Moon",
         "pattern": [
           "화면이 붉어지고 좀비·늑대 무리 소환(10초마다 8마리)",
           "원형 탄막 16발"
@@ -793,7 +793,7 @@
       },
       {
         "hpAbove": 0.0,
-        "name": "3페이즈: 광폭화",
+        "name": "Phase 3: Berserk",
         "pattern": [
           "이동 속도 x1.6",
           "맵 전체 낙하 공격(경고 원 1초)",
@@ -809,7 +809,7 @@
   "guns": [
     {
       "id": "pistol",
-      "name": "P9 권총",
+      "name": "P9 Sidearm",
       "dmg": 10,
       "fireRate": 3.0,
       "magazine": 12,
@@ -825,7 +825,7 @@
     },
     {
       "id": "revolver",
-      "name": "매그넘 리볼버",
+      "name": "Magnum Revolver",
       "dmg": 48,
       "fireRate": 1.6,
       "magazine": 6,
@@ -841,7 +841,7 @@
     },
     {
       "id": "smg",
-      "name": "벌처 기관단총",
+      "name": "Vulture SMG",
       "dmg": 15,
       "fireRate": 12.0,
       "magazine": 32,
@@ -857,7 +857,7 @@
     },
     {
       "id": "shotgun",
-      "name": "브루저 산탄총",
+      "name": "Bruiser Shotgun",
       "dmg": 30,
       "fireRate": 1.3,
       "magazine": 6,
@@ -873,7 +873,7 @@
     },
     {
       "id": "rifle",
-      "name": "AR-77 돌격소총",
+      "name": "AR-77 Assault Rifle",
       "dmg": 75,
       "fireRate": 9.0,
       "magazine": 30,
@@ -889,7 +889,7 @@
     },
     {
       "id": "sniper",
-      "name": "롱샷 저격소총",
+      "name": "Longshot Sniper",
       "dmg": 900,
       "fireRate": 1.1,
       "magazine": 5,
@@ -906,7 +906,7 @@
     },
     {
       "id": "flamer",
-      "name": "용의 숨결 화염방사기",
+      "name": "Dragon's Breath",
       "dmg": 120,
       "fireRate": 20.0,
       "magazine": 100,
@@ -923,7 +923,7 @@
     },
     {
       "id": "minigun",
-      "name": "토네이도 미니건",
+      "name": "Tornado Minigun",
       "dmg": 200,
       "fireRate": 25.0,
       "magazine": 200,
@@ -940,7 +940,7 @@
     },
     {
       "id": "railgun",
-      "name": "아크 레일건",
+      "name": "ARC Railgun",
       "dmg": 9000,
       "fireRate": 1.0,
       "magazine": 4,
@@ -960,7 +960,7 @@
     {
       "id": "power",
       "cat": "무기 강화",
-      "name": "화력 강화",
+      "name": "Firepower Mod",
       "desc": "모든 총 피해 +12%/레벨",
       "stat": "dmgPct",
       "per": 0.12,
@@ -975,7 +975,7 @@
     {
       "id": "rof",
       "cat": "무기 강화",
-      "name": "연사 개조",
+      "name": "Rapid Fire Kit",
       "desc": "연사력 +6%/레벨",
       "stat": "ratePct",
       "per": 0.06,
@@ -990,7 +990,7 @@
     {
       "id": "mag",
       "cat": "무기 강화",
-      "name": "확장 탄창",
+      "name": "Extended Mag",
       "desc": "탄창 +10%/레벨, 재장전 -4%/레벨",
       "stat": "magPct",
       "per": 0.1,
@@ -1005,7 +1005,7 @@
     {
       "id": "armor",
       "cat": "장비",
-      "name": "방탄 조끼",
+      "name": "Kevlar Vest",
       "desc": "최대 체력 +25, 방어 +4/레벨",
       "stat": "armor",
       "per": 1,
@@ -1020,7 +1020,7 @@
     {
       "id": "boots",
       "cat": "장비",
-      "name": "전술 부츠",
+      "name": "Tactical Boots",
       "desc": "이동 속도 +5%/레벨",
       "stat": "speedPct",
       "per": 0.05,
@@ -1035,7 +1035,7 @@
     {
       "id": "tools",
       "cat": "장비",
-      "name": "채집 도구",
+      "name": "Salvage Tools",
       "desc": "채집 속도 +15%/레벨",
       "stat": "gatherPct",
       "per": 0.15,
@@ -1050,7 +1050,7 @@
     {
       "id": "medkit",
       "cat": "장비",
-      "name": "응급 키트",
+      "name": "Med Kit",
       "desc": "체력 재생 +0.5/초/레벨",
       "stat": "regen",
       "per": 0.5,
@@ -1066,7 +1066,7 @@
   "buildings": [
     {
       "id": "scrapper",
-      "name": "고철 분쇄기",
+      "name": "Scrap Crusher",
       "desc": "매일 아침 고철 생산",
       "produces": {
         "scrap": 30
@@ -1082,7 +1082,7 @@
     },
     {
       "id": "shop",
-      "name": "무기 노점",
+      "name": "Arms Stall",
       "desc": "매일 아침 골드 생산",
       "produces": {
         "gold": 120
@@ -1100,7 +1100,7 @@
     },
     {
       "id": "turret",
-      "name": "자동 포탑",
+      "name": "Auto Turret",
       "desc": "밤에 기지 주변 몬스터 자동 사격",
       "dps": 25,
       "cost": {
@@ -1115,7 +1115,7 @@
     },
     {
       "id": "barricade",
-      "name": "바리케이드",
+      "name": "Barricade",
       "desc": "몬스터 접근 피해 -7%/개",
       "dmgReduce": 0.07,
       "cost": {
@@ -1129,7 +1129,7 @@
     },
     {
       "id": "lamp",
-      "name": "조명탑",
+      "name": "Flood Tower",
       "desc": "밤 시야 +15%, 치명타 +3%/개",
       "crit": 0.03,
       "cost": {
@@ -1143,7 +1143,7 @@
     },
     {
       "id": "turretup",
-      "name": "포탑 개량",
+      "name": "Turret Overhaul",
       "desc": "포탑 피해 x1.35/레벨",
       "turretMult": 1.35,
       "cost": {
@@ -1164,7 +1164,7 @@
     {
       "id": "s1",
       "branch": "사격",
-      "name": "침착한 손",
+      "name": "Steady Hands",
       "cost": 1,
       "requires": [],
       "effect": {
@@ -1175,7 +1175,7 @@
     {
       "id": "s2",
       "branch": "사격",
-      "name": "속사",
+      "name": "Quickdraw",
       "cost": 1,
       "requires": [
         "s1"
@@ -1188,7 +1188,7 @@
     {
       "id": "s3",
       "branch": "사격",
-      "name": "급소 사격",
+      "name": "Headhunter",
       "cost": 2,
       "requires": [
         "s1"
@@ -1201,7 +1201,7 @@
     {
       "id": "s4",
       "branch": "사격",
-      "name": "관통탄",
+      "name": "Piercing Rounds",
       "cost": 2,
       "requires": [
         "s2"
@@ -1214,7 +1214,7 @@
     {
       "id": "s5",
       "branch": "사격",
-      "name": "치명 강화",
+      "name": "Lethal Edge",
       "cost": 2,
       "requires": [
         "s3"
@@ -1227,7 +1227,7 @@
     {
       "id": "s6",
       "branch": "사격",
-      "name": "탄 아끼기",
+      "name": "Ammo Saver",
       "cost": 3,
       "requires": [
         "s4"
@@ -1240,7 +1240,7 @@
     {
       "id": "s7",
       "branch": "사격",
-      "name": "학살자",
+      "name": "Slaughterer",
       "cost": 3,
       "requires": [
         "s5",
@@ -1254,7 +1254,7 @@
     {
       "id": "s8",
       "branch": "사격",
-      "name": "거인 사냥꾼",
+      "name": "Giant Slayer",
       "cost": 4,
       "requires": [
         "s7"
@@ -1267,7 +1267,7 @@
     {
       "id": "v1",
       "branch": "생존",
-      "name": "튼튼한 몸",
+      "name": "Tough Body",
       "cost": 1,
       "requires": [],
       "effect": {
@@ -1278,7 +1278,7 @@
     {
       "id": "v2",
       "branch": "생존",
-      "name": "구르기",
+      "name": "Combat Roll",
       "cost": 1,
       "requires": [
         "v1"
@@ -1291,7 +1291,7 @@
     {
       "id": "v3",
       "branch": "생존",
-      "name": "흡혈탄",
+      "name": "Vampire Rounds",
       "cost": 2,
       "requires": [
         "v1"
@@ -1304,7 +1304,7 @@
     {
       "id": "v4",
       "branch": "생존",
-      "name": "강철 피부",
+      "name": "Steel Skin",
       "cost": 2,
       "requires": [
         "v2"
@@ -1317,7 +1317,7 @@
     {
       "id": "v5",
       "branch": "생존",
-      "name": "아드레날린",
+      "name": "Adrenaline",
       "cost": 2,
       "requires": [
         "v3"
@@ -1330,7 +1330,7 @@
     {
       "id": "v6",
       "branch": "생존",
-      "name": "두 번째 기회",
+      "name": "Second Chance",
       "cost": 3,
       "requires": [
         "v4",
@@ -1344,7 +1344,7 @@
     {
       "id": "v7",
       "branch": "생존",
-      "name": "불굴",
+      "name": "Unbreakable",
       "cost": 4,
       "requires": [
         "v6"
@@ -1358,7 +1358,7 @@
     {
       "id": "p1",
       "branch": "생산",
-      "name": "부지런함",
+      "name": "Hustler",
       "cost": 1,
       "requires": [],
       "effect": {
@@ -1369,7 +1369,7 @@
     {
       "id": "p2",
       "branch": "생산",
-      "name": "자석 장갑",
+      "name": "Magnet Gloves",
       "cost": 1,
       "requires": [
         "p1"
@@ -1383,7 +1383,7 @@
     {
       "id": "p3",
       "branch": "생산",
-      "name": "협상가",
+      "name": "Dealmaker",
       "cost": 2,
       "requires": [
         "p1"
@@ -1396,7 +1396,7 @@
     {
       "id": "p4",
       "branch": "생산",
-      "name": "현상금 사냥꾼",
+      "name": "Bounty Hunter",
       "cost": 2,
       "requires": [
         "p2"
@@ -1409,7 +1409,7 @@
     {
       "id": "p5",
       "branch": "생산",
-      "name": "공장장",
+      "name": "Factory Boss",
       "cost": 2,
       "requires": [
         "p3"
@@ -1422,7 +1422,7 @@
     {
       "id": "p6",
       "branch": "생산",
-      "name": "긴 낮",
+      "name": "Long Day",
       "cost": 3,
       "requires": [
         "p4",
@@ -1436,7 +1436,7 @@
     {
       "id": "p7",
       "branch": "생산",
-      "name": "무기 재벌",
+      "name": "Arms Tycoon",
       "cost": 4,
       "requires": [
         "p6"

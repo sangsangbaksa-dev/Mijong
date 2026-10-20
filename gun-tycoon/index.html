@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>탄피상회: 밤의 사냥꾼</title>
+<title>SHELL CASING CO. — Night Hunter</title>
 <meta name="description" content="낮에는 자원을 모으고 밤에는 몰려오는 몬스터를 쏘는 총 + 타이쿤 웹 게임">
 <meta name="theme-color" content="#12141a">
 <link rel="icon" href="design/icons/gun-pistol.svg" type="image/svg+xml">
@@ -15,7 +15,7 @@
   <canvas id="cv" aria-hidden="true"></canvas>
   <canvas id="ov" aria-label="게임 화면"></canvas>
 
-  <div id="loading" class="screen"><div class="load-card"><p class="eyebrow">불러오는 중</p><h1 class="gt-title">탄피상회</h1><div class="gt-bar gt-bar--wave load-bar"></div></div></div>
+  <div id="loading" class="screen"><div class="load-card"><p class="eyebrow">불러오는 중</p><h1 class="gt-title">SHELL CASING CO.</h1><div class="gt-bar gt-bar--wave load-bar"></div></div></div>
 
   <!-- 전투 HUD -->
   <div id="hud" hidden>
@@ -52,12 +52,12 @@
   <section id="title" class="screen" hidden>
     <div class="title-card">
       <p class="eyebrow">총 + 타이쿤</p>
-      <h1 class="gt-title big-title">탄피상회</h1>
-      <p class="title-sub">밤의 사냥꾼</p>
+      <h1 class="gt-title big-title">SHELL CASING CO.</h1>
+      <p class="title-sub">NIGHT HUNTER</p>
       <p class="title-copy">낮에는 넓은 들판에서 고철과 보급 상자를 모으고, 밤에는 사방에서 달려오는 몬스터를 쏘세요. 하루를 버티면 캠프로 돌아와 총을 사고 시설을 짓고 스킬트리를 찍습니다. 준비가 되면 붉은 달의 군주에게 도전하세요.</p>
       <div class="title-actions">
-        <button class="gt-btn gt-btn--primary" id="btnContinue" hidden>이어하기</button>
-        <button class="gt-btn gt-btn--primary" id="btnNew">새로 시작</button>
+        <button class="gt-btn gt-btn--primary" id="btnContinue" hidden>CONTINUE</button>
+        <button class="gt-btn gt-btn--primary" id="btnNew">NEW GAME</button>
       </div>
       <p class="title-keys" id="titleKeys">이동 WASD · 조준 마우스 · 사격 클릭 유지 · 재장전 R · 구르기 Space · 무기 1~9, Q</p>
     </div>
@@ -68,7 +68,7 @@
     <header class="hub-head">
       <div>
         <p class="eyebrow" id="hubEyebrow">2일차 아침</p>
-        <h2 class="gt-title hub-title">캠프</h2>
+        <h2 class="gt-title hub-title">BASE CAMP</h2>
       </div>
       <div class="hub-wallet" id="hubWallet"></div>
     </header>
@@ -82,17 +82,17 @@
           <div class="gt-bar gt-bar--wave" id="powerBar"></div>
         </div>
         <div class="hub-go">
-          <button class="gt-btn gt-btn--primary" id="btnNextDay">다음 날 시작</button>
-          <button class="gt-boss-btn" id="btnBoss">보스에 도전하기</button>
+          <button class="gt-btn gt-btn--primary" id="btnNextDay">NEXT DAY</button>
+          <button class="gt-boss-btn" id="btnBoss">CHALLENGE THE BOSS</button>
         </div>
         <button class="gt-btn gt-btn--ghost gt-btn--sm" id="btnSound">소리 켜짐</button>
       </aside>
       <main class="hub-main gt-panel gt-shop">
         <nav class="gt-tabs" id="hubTabs">
-          <button class="gt-tab is-active" data-tab="shop">총기 상점</button>
-          <button class="gt-tab" data-tab="gear">장비</button>
-          <button class="gt-tab" data-tab="build">시설</button>
-          <button class="gt-tab" data-tab="skill">스킬트리</button>
+          <button class="gt-tab is-active" data-tab="shop">ARMORY</button>
+          <button class="gt-tab" data-tab="gear">GEAR</button>
+          <button class="gt-tab" data-tab="build">BASE</button>
+          <button class="gt-tab" data-tab="skill">SKILLS</button>
         </nav>
         <div class="gt-shop__list" id="hubList"></div>
       </main>
@@ -103,7 +103,7 @@
   <section id="ending" class="gt-ending" hidden>
     <div class="gt-backdrop gt-backdrop--ending"></div>
     <img class="gt-ending__trophy" src="design/icons/ui-trophy.svg" alt="">
-    <h1 class="gt-ending__title">붉은 달이 졌다</h1>
+    <h1 class="gt-ending__title">THE BLOOD MOON FALLS</h1>
     <p class="gt-ending__sub">마지막 밤이 끝났습니다. 들판에 아침이 오고, 탄피상회의 간판에 다시 불이 켜집니다.</p>
     <div class="gt-ending__stats stats-grid" id="endStats"></div>
     <div class="acts"><button class="gt-btn gt-btn--primary" data-act="hub">캠프로 돌아가 계속하기</button><button class="gt-btn gt-btn--ghost" data-act="reset">처음부터</button></div>
