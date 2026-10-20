@@ -9,6 +9,7 @@ const MAP = RULES.mapSize.w;
 const CAMP = { x: MAP / 2, y: MAP / 2 };
 const DUSK_LEN = 6;
 const NIGHT_LEN = RULES.nightDurationSec;
+const HP_SOFT = 0.88; // 실제 플레이 테스트에서 밤 난이도가 가팔라 체력 성장을 조금 누그러뜨림
 
 /* 디자인 스레드 아이콘과 몬스터 그림 대응표 */
 const GUN_ICON = { pistol: 'gun-pistol', revolver: 'gun-pistol', smg: 'gun-smg', shotgun: 'gun-shotgun', rifle: 'gun-rifle', sniper: 'gun-sniper', flamer: 'gun-laser', minigun: 'gun-minigun', railgun: 'gun-laser' };
@@ -92,7 +93,7 @@ function power(id = S.gun) {
   const g = gunStats(id);
   const cycle = g.mag / g.rate + g.reload;
   const sustained = g.dmg * g.pellets * g.mag / cycle * (1 + g.crit * (g.critMul - 1));
-  return sustained * (1 + Math.min(g.hits - 1, 4) * 0.4) * (g.pellets > 1 ? 0.6 : 1);
+  return sustained * (g.pellets > 1 ? 0.6 : 1);
 }
 const bestPower = () => Math.max(...GUNS.filter(g => S.guns[g.id]).map(g => power(g.id)));
 const bossReq = () => D.boss.hp * (100 / (100 + D.boss.armor)) / 150 / E.bossDmgMult;
@@ -331,7 +332,7 @@ function spawnMon(id, ang, at, mul = 1) {
   const e = {
     id: uid++, type: id, look: L, name: m.name,
     x: at ? at.x : clamp(p.x + Math.cos(a) * d, 30, MAP - 30), y: at ? at.y : clamp(p.y + Math.sin(a) * d, 30, MAP - 30),
-    hp: m.hp * info.hpMult * mul, max: m.hp * info.hpMult * mul, sp: m.speed * rand(0.9, 1.1), r: L.r,
+    hp: m.hp * Math.pow(info.hpMult, HP_SOFT) * mul, max: m.hp * Math.pow(info.hpMult, HP_SOFT) * mul, sp: m.speed * rand(0.9, 1.1), r: L.r,
     dmg: m.dmg * info.dmgMult, gold: m.gold * info.goldMult * mul, hit: 0, ph: Math.random() * 6, contact: 0, atk: rand(1, 3), face: 1,
   };
   R.enemies.push(e);
@@ -342,7 +343,7 @@ function spawnElite(eid) {
   const pool = R.info.monsters, avg = pool.reduce((s, id) => s + MON[id].hp, 0) / pool.length;
   const e = spawnMon(el.base, Math.random() * 7);
   e.elite = el; e.name = el.name;
-  e.hp = e.max = avg * R.info.hpMult * RULES.eliteHpMult;
+  e.hp = e.max = avg * Math.pow(R.info.hpMult, HP_SOFT) * RULES.eliteHpMult;
   e.gold = MON[el.base].gold * R.info.goldMult * RULES.eliteGoldMult;
   e.r = e.look.r * 2.2; e.look = { ...e.look, size: e.look.size * 2.3 }; e.sp *= 0.8; e.dmg *= 2; e.atk = 3;
   toast(`엘리트 등장: ${el.name}`, 'red'); sfx('warning', { pulses: 4 });
