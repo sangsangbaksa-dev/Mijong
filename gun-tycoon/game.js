@@ -663,7 +663,7 @@ function renderHub() {
   $('btnBoss').textContent = S.won ? '보스 다시 잡기' : '보스에 도전하기';
   document.querySelectorAll('#hubTabs .gt-tab').forEach(b => {
     b.classList.toggle('is-active', b.dataset.tab === hubTab);
-    if (b.dataset.tab === 'skill') b.innerHTML = '스킬트리' + (S.sp ? ` <span class="gt-badge gt-badge--new">${S.sp}</span>` : '');
+    if (b.dataset.tab === 'skill') b.textContent = 'SKILLS';
   });
   $('hubList').innerHTML = hubTab === 'skill' ? skillHtml() : hubTab === 'shop' ? shopHtml() : hubTab === 'gear' ? gearHtml() : buildHtml();
 }

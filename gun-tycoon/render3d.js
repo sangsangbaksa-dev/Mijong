@@ -215,6 +215,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
   const flashMat = new THREE.SpriteMaterial({ map: glowTex, color: 0xffd060, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
   const flashSprite = new THREE.Sprite(flashMat); flashSprite.scale.set(1.6, 1.6, 1); scene.add(flashSprite);
 
+  let kick = 0;
   const monViews = new Map();
   function monView(e) {
     let v = monViews.get(e.id);
@@ -332,7 +333,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
 
     // 카메라
     if (live) {
-      const p = R.p, yaw = ctx.yaw ?? -Math.PI / 2, lead = ctx.locked ? 4.5 : 1.6;
+      const p = R.p, yaw = ctx.yaw ?? -Math.PI / 2, lead = ctx.locked ? 0 : 1.6;
       const tx = p.x * M + Math.cos(p.ang) * lead, tz = p.y * M + Math.sin(p.ang) * lead;
       const want = new THREE.Vector3(tx, 0, tz);
       camLook.lerp(want, Math.min(1, dt * (ctx.locked ? 14 : 6)));
@@ -366,8 +367,9 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
       const p = R.p, px = p.x * M, pz = p.y * M;
       // 플레이어
       playerSprite.position.set(px, 0, pz);
-      const faceL = Math.cos(p.ang) < 0;
-      playerSprite.scale.x = faceL ? -1.9 : 1.9;
+      const lk = !!ctx.locked, faceL = lk ? false : Math.cos(p.ang) < 0;
+      kick = R.flash > 0 ? 1 : kick * Math.exp(-dt * 16);
+      playerSprite.scale.x = faceL ? -1.9 : 1.9 * (1 + kick * 0.04); playerSprite.scale.y = 1.9 * (1 - kick * 0.03);
       const blink = p.inv > 0 && Math.floor(p.inv * 30) % 2;
       playerSprite.material.opacity = blink ? 0.4 : 1;
       playerSprite.position.y = p.dash > 0 ? 0.15 : Math.abs(Math.sin(t * 10)) * Math.min(1, Math.hypot(p.vx, p.vy) / 200) * 0.08;
@@ -377,12 +379,16 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
       if (gunSprite.material.map !== gIcon) { gunSprite.material.map = gIcon; gunSprite.material.needsUpdate = true; }
       const a0 = project(p.x, p.y, 0.8), a1 = project(p.x + Math.cos(p.ang) * 40, p.y + Math.sin(p.ang) * 40, 0.8);
       const sa = Math.atan2(-(a1.y - a0.y), a1.x - a0.x);
-      gunSprite.position.set(px + Math.cos(p.ang) * 0.55, 0.8, pz + Math.sin(p.ang) * 0.55);
-      gunSprite.material.rotation = faceL ? sa + Math.PI : sa;
+      const fx = Math.cos(p.ang), fz = Math.sin(p.ang), rx = -fz, rz = fx;
+      // 잠금 중에는 총을 캐릭터의 오른손 쪽에 들고, 쏘면 뒤로 튄다
+      const side = lk ? 0.55 : 0, fwd = (lk ? 0.45 : 0.55) - kick * 0.28;
+      const gx = px + fx * fwd + rx * side, gz = pz + fz * fwd + rz * side;
+      gunSprite.position.set(gx, 0.8 + kick * 0.05, gz);
+      gunSprite.material.rotation = (faceL ? sa + Math.PI : sa) + kick * 0.12;
       gunSprite.scale.set(faceL ? -1.4 : 1.4, 1.4, 1);
-      const recoil = R.flash > 0 ? 0.92 : 1; gunSprite.scale.multiplyScalar(recoil);
       flashSprite.visible = R.flash > 0;
-      flashSprite.position.set(px + Math.cos(p.ang) * 1.3, 0.85, pz + Math.sin(p.ang) * 1.3);
+      flashSprite.scale.setScalar(1.3 + Math.random() * 0.7);
+      flashSprite.position.set(gx + fx * 0.9, 0.85, gz + fz * 0.9);
       muzzle.intensity = R.flash > 0 ? 6 : 0; muzzle.position.copy(flashSprite.position);
       // 손전등
       torch.position.set(px, 2.4, pz); torch.target.position.set(px + Math.cos(p.ang) * 8, 0, pz + Math.sin(p.ang) * 8);
