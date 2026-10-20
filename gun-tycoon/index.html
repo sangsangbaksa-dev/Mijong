@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>SHELL CASING CO. — Night Hunter</title>
-<meta name="description" content="낮에는 자원을 모으고 밤에는 몰려오는 몬스터를 쏘는 총 + 타이쿤 웹 게임">
+<meta name="description" content="Gather by day, gun down the horde by night. A gun + tycoon web game.">
 <meta name="theme-color" content="#12141a">
 <link rel="icon" href="design/icons/gun-pistol.svg" type="image/svg+xml">
 <link rel="stylesheet" href="design/style.css">
@@ -13,20 +13,21 @@
 <body class="gt">
 <div id="app">
   <canvas id="cv" aria-hidden="true"></canvas>
-  <canvas id="ov" aria-label="게임 화면"></canvas>
+  <canvas id="ov" aria-label="Game"></canvas>
 
-  <div id="loading" class="screen"><div class="load-card"><p class="eyebrow">불러오는 중</p><h1 class="gt-title">SHELL CASING CO.</h1><div class="gt-bar gt-bar--wave load-bar"></div></div></div>
+  <div id="loading" class="screen"><div class="load-card"><p class="eyebrow">LOADING</p><h1 class="gt-title">SHELL CASING CO.</h1><div class="gt-bar gt-bar--wave load-bar"></div></div></div>
 
   <!-- 전투 HUD -->
   <div id="hud" hidden>
     <div class="hud-left">
+      <div class="gt-portrait"><img src="design/assets/player-portrait.png" alt=""></div>
       <div class="hud-vitals gt-panel">
-        <div class="hud-row"><img class="gt-icon gt-icon--sm" src="design/icons/ui-heart.svg" alt="체력"><div class="gt-bar gt-bar--hp gt-bar--lg" id="hpBar"></div><span class="gt-num hud-val" id="hpTxt">100</span></div>
-        <div class="hud-sub" id="spTxt">스킬 포인트 0</div>
+        <div class="hud-row"><img class="gt-icon gt-icon--sm" src="design/icons/ui-heart.svg" alt="HP"><div class="gt-bar gt-bar--hp gt-bar--lg" id="hpBar"></div><span class="gt-num hud-val" id="hpTxt">100</span></div>
+        <div class="hud-sub" id="spTxt">Skill points 0</div>
       </div>
     </div>
     <div class="hud-clock gt-panel" id="clock">
-      <div class="clock-title"><img class="gt-icon gt-icon--sm clock-ico" src="design/icons/ui-sun.svg" alt=""><span id="dayTxt">1일차</span><span class="clock-phase" id="phaseTxt">낮</span></div>
+      <div class="clock-title"><img class="gt-icon gt-icon--sm clock-ico" src="design/icons/ui-sun.svg" alt=""><span id="dayTxt">Day 1</span><span class="clock-phase" id="phaseTxt">Day</span></div>
       <div class="clock-track"><i id="clockSun"></i></div>
       <div class="clock-hint" id="clockHint"></div>
     </div>
@@ -34,32 +35,32 @@
     <div class="hud-gun gt-panel" id="gunPanel">
       <img id="gunIcon" alt="">
       <div>
-        <div class="gun-name" id="gunName">권총</div>
+        <div class="gun-name" id="gunName">P9 Sidearm</div>
         <div class="gt-num gun-ammo" id="ammoTxt">12 / 12</div>
         <div class="gt-bar gt-bar--reload" id="reloadBar" style="--value:100"></div>
       </div>
     </div>
-    <div class="hud-btns"><button class="gt-btn gt-btn--sm gt-btn--ghost" id="btnPause" aria-label="일시정지">일시정지</button></div>
+    <div class="hud-btns"><button class="gt-btn gt-btn--sm gt-btn--ghost" id="btnPause" aria-label="Pause">PAUSE</button></div>
     <div class="boss-bar" id="bossBar" hidden>
       <div class="boss-name" id="bossName"></div>
       <div class="gt-bar gt-bar--hp gt-bar--lg" id="bossHp"></div>
     </div>
   </div>
   <div id="joy" hidden><i></i></div>
-  <button id="dashBtn" class="gt-btn" hidden>구르기</button>
+  <button id="dashBtn" class="gt-btn" hidden>ROLL</button>
 
   <!-- 타이틀 -->
   <section id="title" class="screen" hidden>
     <div class="title-card">
-      <p class="eyebrow">총 + 타이쿤</p>
+      <p class="eyebrow">GUN + TYCOON</p>
       <h1 class="gt-title big-title">SHELL CASING CO.</h1>
       <p class="title-sub">NIGHT HUNTER</p>
-      <p class="title-copy">낮에는 넓은 들판에서 고철과 보급 상자를 모으고, 밤에는 사방에서 달려오는 몬스터를 쏘세요. 하루를 버티면 캠프로 돌아와 총을 사고 시설을 짓고 스킬트리를 찍습니다. 준비가 되면 붉은 달의 군주에게 도전하세요.</p>
+      <p class="title-copy">By day, scavenge scrap and supply crates across the open field. By night, gun down the monsters charging from every side. Survive the day, then return to camp to buy guns, build facilities and unlock skills. When you are ready, challenge the Lord of the Blood Moon.</p>
       <div class="title-actions">
         <button class="gt-btn gt-btn--primary" id="btnContinue" hidden>CONTINUE</button>
         <button class="gt-btn gt-btn--primary" id="btnNew">NEW GAME</button>
       </div>
-      <p class="title-keys" id="titleKeys">이동 WASD · 조준 마우스 · 사격 클릭 유지 · 재장전 R · 구르기 Space · 무기 1~9, Q</p>
+      <p class="title-keys" id="titleKeys">Move WASD · Aim mouse · Fire hold click · Reload R · Roll Space · Weapons 1-9, Q</p>
     </div>
   </section>
 
@@ -67,25 +68,25 @@
   <section id="hub" class="screen" hidden>
     <header class="hub-head">
       <div>
-        <p class="eyebrow" id="hubEyebrow">2일차 아침</p>
+        <p class="eyebrow" id="hubEyebrow">Day 2 morning</p>
         <h2 class="gt-title hub-title">BASE CAMP</h2>
       </div>
       <div class="hub-wallet" id="hubWallet"></div>
     </header>
     <div class="hub-body">
       <aside class="hub-side gt-panel">
-        <h3 class="gt-h2">어젯밤 정산</h3>
+        <h3 class="gt-h2">LAST NIGHT</h3>
         <div class="ledger" id="ledger"></div>
         <div class="power">
-          <div class="power-row"><span>내 화력 (초당 피해)</span><b class="gt-num" id="powerNow">0</b></div>
-          <div class="power-row"><span>보스 권장 화력</span><b class="gt-num" id="powerReq">0</b></div>
+          <div class="power-row"><span>Your firepower (DPS)</span><b class="gt-num" id="powerNow">0</b></div>
+          <div class="power-row"><span>Recommended for boss</span><b class="gt-num" id="powerReq">0</b></div>
           <div class="gt-bar gt-bar--wave" id="powerBar"></div>
         </div>
         <div class="hub-go">
           <button class="gt-btn gt-btn--primary" id="btnNextDay">NEXT DAY</button>
           <button class="gt-boss-btn" id="btnBoss">CHALLENGE THE BOSS</button>
         </div>
-        <button class="gt-btn gt-btn--ghost gt-btn--sm" id="btnSound">소리 켜짐</button>
+        <button class="gt-btn gt-btn--ghost gt-btn--sm" id="btnSound">Sound on</button>
       </aside>
       <main class="hub-main gt-panel gt-shop">
         <nav class="gt-tabs" id="hubTabs">
@@ -104,9 +105,9 @@
     <div class="gt-backdrop gt-backdrop--ending"></div>
     <img class="gt-ending__trophy" src="design/icons/ui-trophy.svg" alt="">
     <h1 class="gt-ending__title">THE BLOOD MOON FALLS</h1>
-    <p class="gt-ending__sub">마지막 밤이 끝났습니다. 들판에 아침이 오고, 탄피상회의 간판에 다시 불이 켜집니다.</p>
+    <p class="gt-ending__sub">The last night is over. Morning comes to the field, and the lights of Shell Casing Co. come back on.</p>
     <div class="gt-ending__stats stats-grid" id="endStats"></div>
-    <div class="acts"><button class="gt-btn gt-btn--primary" data-act="hub">캠프로 돌아가 계속하기</button><button class="gt-btn gt-btn--ghost" data-act="reset">처음부터</button></div>
+    <div class="acts"><button class="gt-btn gt-btn--primary" data-act="hub">BACK TO CAMP</button><button class="gt-btn gt-btn--ghost" data-act="reset">START OVER</button></div>
   </section>
 
   <div class="gt-modal-backdrop" id="modal" hidden><div class="gt-modal" id="modalBox"></div></div>
@@ -115,7 +116,7 @@
 <script src="audio/audio.js"></script>
 <script type="module">
   import('./game.js').then(() => { document.getElementById('loading').hidden = true; document.getElementById('title').hidden = false; })
-    .catch(e => { document.querySelector('#loading .eyebrow').textContent = '불러오지 못했습니다: ' + e.message; console.error(e); });
+    .catch(e => { document.querySelector('#loading .eyebrow').textContent = 'Failed to load: ' + e.message; console.error(e); });
 </script>
 </body>
 </html>

@@ -26,6 +26,9 @@ export const MONSTERS = {
   boss:   { img: 'design/assets/monster-boss.png',   scale: 7.0, name: '심연의 군주', eyeGlow: 0xff3a3a },
 };
 
+// 플레이어 (3인칭 뒷모습 스프라이트). 카메라는 플레이어 뒤 위쪽에서 따라가면 이 그림과 각도가 맞습니다
+export const PLAYER = { img: 'design/assets/player-back.png', portrait: 'design/assets/player-portrait.png', scale: 1.9, camera: { back: 6, up: 4, lookAhead: 6 } };
+
 // 바닥 텍스처: RepeatWrapping, 4m 마다 한 번 반복
 export const GROUND = { img: 'design/assets/tex-grass-seamless.jpg', metersPerTile: 4 };
 

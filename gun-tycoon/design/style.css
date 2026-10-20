@@ -608,6 +608,40 @@ body.gt {
 .gt-enemy--boss   { width: 200px; height: 200px; }
 .gt-enemy img { filter: drop-shadow(0 6px 4px rgba(0,0,0,.45)); }
 
+/* =========================================================
+   17. Canva 2차: 캐릭터, 스킬 아이콘, 허브 그림
+   ========================================================= */
+/* 플레이어 (Canva 뒷모습, 3인칭) */
+.gt-player--art { width: 84px; height: 84px; }
+.gt-player--art img { filter: drop-shadow(0 6px 4px rgba(0,0,0,.45)); }
+
+/* 초상화: HUD 왼쪽, 허브 머리말 */
+.gt-portrait {
+  width: 48px; height: 48px; flex: none; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, #3b5b8a, #141a2e);
+  border: 2px solid var(--gt-gold); box-shadow: 0 0 10px rgba(242,182,50,.35);
+}
+.gt-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; display: block; }
+.gt-portrait--lg { width: 88px; height: 88px; border-width: 3px; }
+.gt-portrait.is-hurt { border-color: var(--gt-red); box-shadow: 0 0 14px rgba(229,72,77,.7); }
+
+/* 그림 스킬 노드: 사각 아이콘을 꽉 채움 */
+.gt-skill--art { width: 64px; height: 64px; padding: 0; border-radius: 14px; overflow: visible; }
+.gt-skill--art > img { width: 100%; height: 100%; border-radius: 11px; object-fit: cover; }
+.gt-skill--art.is-locked > img { filter: grayscale(1) brightness(.5); }
+.gt-skill--art.is-locked::after {
+  content: ""; position: absolute; inset: 0; border-radius: 11px;
+  background: url("icons/ui-lock.svg") center / 28px no-repeat;
+}
+.gt-branch { gap: 18px; }
+.gt-skill--art + .gt-skill--art::before { height: 21px; }
+.gt-skill--ult { width: 76px; height: 76px; border-radius: 18px; }          /* 가지 마지막 궁극기 */
+.gt-skill--ult.is-learned { box-shadow: 0 0 22px color-mix(in srgb, var(--branch) 80%, transparent); }
+
+/* 허브 타일 그림 */
+.gt-hub-tile img.gt-hub-tile__art { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255,255,255,.08); }
+.gt-hub-tile:has(.gt-hub-tile__art) { min-height: 0; }
+
 /* 추가 키프레임 */
 @keyframes gt-wobble     { 0%,100% { rotate: 0deg; } 25% { rotate: -4deg; } 75% { rotate: 4deg; } }
 @keyframes gt-bob        { 0%,100% { translate: 0 0; } 50% { translate: 0 -6px; } }

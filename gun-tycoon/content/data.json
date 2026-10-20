@@ -961,7 +961,7 @@
       "id": "power",
       "cat": "무기 강화",
       "name": "Firepower Mod",
-      "desc": "모든 총 피해 +12%/레벨",
+      "desc": "All guns damage +12%/level",
       "stat": "dmgPct",
       "per": 0.12,
       "max": 60,
@@ -976,7 +976,7 @@
       "id": "rof",
       "cat": "무기 강화",
       "name": "Rapid Fire Kit",
-      "desc": "연사력 +6%/레벨",
+      "desc": "Fire rate +6%/level",
       "stat": "ratePct",
       "per": 0.06,
       "max": 25,
@@ -991,7 +991,7 @@
       "id": "mag",
       "cat": "무기 강화",
       "name": "Extended Mag",
-      "desc": "탄창 +10%/레벨, 재장전 -4%/레벨",
+      "desc": "Magazine +10%/level, reload -4%/level",
       "stat": "magPct",
       "per": 0.1,
       "max": 15,
@@ -1006,7 +1006,7 @@
       "id": "armor",
       "cat": "장비",
       "name": "Kevlar Vest",
-      "desc": "최대 체력 +25, 방어 +4/레벨",
+      "desc": "Max HP +25, armor +4/level",
       "stat": "armor",
       "per": 1,
       "max": 40,
@@ -1021,7 +1021,7 @@
       "id": "boots",
       "cat": "장비",
       "name": "Tactical Boots",
-      "desc": "이동 속도 +5%/레벨",
+      "desc": "Move speed +5%/level",
       "stat": "speedPct",
       "per": 0.05,
       "max": 10,
@@ -1036,7 +1036,7 @@
       "id": "tools",
       "cat": "장비",
       "name": "Salvage Tools",
-      "desc": "채집 속도 +15%/레벨",
+      "desc": "Gather speed +15%/level",
       "stat": "gatherPct",
       "per": 0.15,
       "max": 30,
@@ -1051,7 +1051,7 @@
       "id": "medkit",
       "cat": "장비",
       "name": "Med Kit",
-      "desc": "체력 재생 +0.5/초/레벨",
+      "desc": "HP regen +0.5/s per level",
       "stat": "regen",
       "per": 0.5,
       "max": 20,
@@ -1067,7 +1067,7 @@
     {
       "id": "scrapper",
       "name": "Scrap Crusher",
-      "desc": "매일 아침 고철 생산",
+      "desc": "Produces scrap every morning",
       "produces": {
         "scrap": 30
       },
@@ -1083,7 +1083,7 @@
     {
       "id": "shop",
       "name": "Arms Stall",
-      "desc": "매일 아침 골드 생산",
+      "desc": "Produces gold every morning",
       "produces": {
         "gold": 120
       },
@@ -1101,7 +1101,7 @@
     {
       "id": "turret",
       "name": "Auto Turret",
-      "desc": "밤에 기지 주변 몬스터 자동 사격",
+      "desc": "Auto-fires at monsters near camp at night",
       "dps": 25,
       "cost": {
         "scrap": [
@@ -1116,7 +1116,7 @@
     {
       "id": "barricade",
       "name": "Barricade",
-      "desc": "몬스터 접근 피해 -7%/개",
+      "desc": "Monster contact damage -7% each",
       "dmgReduce": 0.07,
       "cost": {
         "scrap": [
@@ -1130,7 +1130,7 @@
     {
       "id": "lamp",
       "name": "Flood Tower",
-      "desc": "밤 시야 +15%, 치명타 +3%/개",
+      "desc": "Night vision +15%, crit +3% each",
       "crit": 0.03,
       "cost": {
         "scrap": [
@@ -1144,7 +1144,7 @@
     {
       "id": "turretup",
       "name": "Turret Overhaul",
-      "desc": "포탑 피해 x1.35/레벨",
+      "desc": "Turret damage x1.35/level",
       "turretMult": 1.35,
       "cost": {
         "scrap": [

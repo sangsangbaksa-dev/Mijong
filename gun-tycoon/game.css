@@ -159,3 +159,9 @@ body.gt { min-height: 0; touch-action: none; }
 #hub { background: linear-gradient(180deg, rgba(12,14,20,.15), rgba(12,14,20,.82) 30%, rgba(12,14,20,.92)); }
 #title { background: radial-gradient(900px 500px at 50% 35%, rgba(10,12,20,.25), rgba(10,12,20,.8) 75%); }
 #ending .acts { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+.skill-top { justify-content: flex-start; align-items: center; }
+.skill-top .skill-cost { margin-left: auto; }
+.skill-ico { width: 36px; height: 36px; flex: none; border-radius: 9px; object-fit: cover; }
+.skill.locked .skill-ico { filter: grayscale(1) brightness(.5); }
+.hud-left { display: flex; gap: 8px; align-items: flex-start; }

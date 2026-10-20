@@ -1,7 +1,7 @@
 /* 3D 맵 렌더러 (three.js). 맵·지형·캠프·자원은 3D, 사람과 몬스터는 Canva 2D 스프라이트(빌보드).
    게임 로직 좌표(px)를 40px = 1m 로 바꿔 그린다. 화면 위 숫자와 화살표, 미니맵은 2D 오버레이 캔버스에 그린다. */
 import * as THREE from './vendor/three.module.min.js';
-import { PHASES, MONSTERS, GROUND, TORCH, lerpPhase, applyPhase } from './design/theme3d.js';
+import { PHASES, MONSTERS, GROUND, PLAYER, TORCH, lerpPhase, applyPhase } from './design/theme3d.js';
 
 const M = 1 / 40;
 
@@ -19,6 +19,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
   const octx = overlay.getContext('2d');
 
   /* ---------- 텍스처 ---------- */
+  let backTex = null;
   const loader = new THREE.TextureLoader();
   const loadTex = url => new Promise(res => loader.load(url, t => { t.colorSpace = THREE.SRGBColorSpace; res(t); }, undefined, () => res(null)));
   async function svgTex(name, size = 256) {
@@ -37,6 +38,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
   }
   const monTex = {};
   const [grass, ...rest] = await Promise.all([
+    loadTex(PLAYER.img).then(t => (backTex = t)),
     loadTex(GROUND.img),
     ...Object.entries(MONSTERS).map(([k, v]) => loadTex(v.img).then(t => (monTex[k] = t))),
   ]);
@@ -206,7 +208,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
 
   /* ---------- 스프라이트 ---------- */
   function spriteMat(tex, o = {}) { return new THREE.SpriteMaterial({ map: tex, transparent: true, alphaTest: 0.08, fog: true, ...o }); }
-  const playerSprite = new THREE.Sprite(spriteMat(icons.player)); playerSprite.center.set(0.5, 0.05); playerSprite.scale.set(1.9, 1.9, 1); scene.add(playerSprite);
+  const playerSprite = new THREE.Sprite(spriteMat(icons.player)); playerSprite.center.set(0.5, 0.05); const sideTex = playerSprite.material.map; playerSprite.scale.set(1.9, 1.9, 1); scene.add(playerSprite);
   const gunSprite = new THREE.Sprite(spriteMat(icons['gun-pistol'], { depthTest: false })); gunSprite.scale.set(1.4, 1.4, 1); gunSprite.renderOrder = 5; scene.add(gunSprite);
   const playerShadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   playerShadow.rotation.x = -Math.PI / 2; playerShadow.scale.set(1.6, 0.9, 1); scene.add(playerShadow);
@@ -367,7 +369,10 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
       const p = R.p, px = p.x * M, pz = p.y * M;
       // 플레이어
       playerSprite.position.set(px, 0, pz);
-      const lk = !!ctx.locked, faceL = lk ? false : Math.cos(p.ang) < 0;
+      const lk = !!ctx.locked, back = lk && !!backTex, faceL = lk ? false : Math.cos(p.ang) < 0;
+      const want = back ? backTex : sideTex;
+      if (playerSprite.material.map !== want) { playerSprite.material.map = want; playerSprite.material.needsUpdate = true; }
+      gunSprite.visible = !back;
       kick = R.flash > 0 ? 1 : kick * Math.exp(-dt * 16);
       playerSprite.scale.x = faceL ? -1.9 : 1.9 * (1 + kick * 0.04); playerSprite.scale.y = 1.9 * (1 - kick * 0.03);
       const blink = p.inv > 0 && Math.floor(p.inv * 30) % 2;
@@ -388,7 +393,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
       gunSprite.scale.set(faceL ? -1.4 : 1.4, 1.4, 1);
       flashSprite.visible = R.flash > 0;
       flashSprite.scale.setScalar(1.3 + Math.random() * 0.7);
-      flashSprite.position.set(gx + fx * 0.9, 0.85, gz + fz * 0.9);
+      if (back) flashSprite.position.set(px + rx * 0.5 + fx * 0.75, 1.45, pz + rz * 0.5 + fz * 0.75); else flashSprite.position.set(gx + fx * 0.9, 0.85, gz + fz * 0.9);
       muzzle.intensity = R.flash > 0 ? 6 : 0; muzzle.position.copy(flashSprite.position);
       // 손전등
       torch.position.set(px, 2.4, pz); torch.target.position.set(px + Math.cos(p.ang) * 8, 0, pz + Math.sin(p.ang) * 8);
@@ -533,7 +538,7 @@ export async function createRenderer({ canvas, overlay, MAP, CAMP, low }) {
       octx.lineWidth = 3; octx.strokeStyle = '#000'; octx.strokeText(qq.txt, s.x, s.y); octx.fillStyle = qq.col; octx.fillText(qq.txt, s.x, s.y);
     }
     octx.globalAlpha = 1;
-    if (!ctx.locked && ctx.aim && !R.over) { octx.font = '700 13px "Noto Sans KR", sans-serif'; octx.textAlign = 'center'; octx.fillStyle = 'rgba(255,255,255,.85)'; octx.fillText('화면을 클릭하면 마우스가 가운데에 고정되고, 마우스로 방향을 돌립니다', W2 / 2, H2 - 28); }
+    if (!ctx.locked && ctx.aim && !R.over) { octx.font = '700 13px "Noto Sans KR", sans-serif'; octx.textAlign = 'center'; octx.fillStyle = 'rgba(255,255,255,.85)'; octx.fillText('Click the screen to lock the mouse to the center, then turn with the mouse', W2 / 2, H2 - 28); }
     // 조준점
     if (ctx.aim) {
       const m = ctx.aim; octx.strokeStyle = 'rgba(255,255,255,.9)'; octx.lineWidth = 2;

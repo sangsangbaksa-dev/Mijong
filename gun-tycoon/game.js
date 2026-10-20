@@ -30,7 +30,7 @@ const MON = Object.fromEntries(D.monsters.map(m => [m.id, m]));
 const GUNS = D.guns;
 const SKILLS = D.skills;
 const BRANCHES = [...new Set(SKILLS.map(s => s.branch))];
-const RES_NAME = { gold: '골드', scrap: '고철', crystal: '크리스탈' };
+const RES_NAME = { gold: 'Gold', scrap: 'Scrap', crystal: 'Crystal' };
 
 /* ================= 유틸 ================= */
 const $ = id => document.getElementById(id);
@@ -39,9 +39,10 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const dist2 = (a, b) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
 function kfmt(n) {
   n = Math.floor(n);
-  if (n >= 1e8) return (n / 1e8).toFixed(n >= 1e9 ? 0 : 1) + '억';
-  if (n >= 1e4) return (n / 1e4).toFixed(n >= 1e5 ? 0 : 1) + '만';
-  return n.toLocaleString('ko-KR');
+  if (n >= 1e9) return (n / 1e9).toFixed(n >= 1e10 ? 0 : 1) + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M';
+  if (n >= 1e4) return (n / 1e3).toFixed(0) + 'K';
+  return n.toLocaleString('en-US');
 }
 const Snd = window.GameAudio || { play() {}, startMusic() {}, stopMusic() {}, setMusicIntensity() {}, toggleMute() { return true; }, isMuted() { return false; } };
 const sfx = (n, o) => { if (!bot.on) try { Snd.play(n, o); } catch (e) {} };
@@ -155,7 +156,7 @@ function step(dt) {
   R.t += dt; S.stats.played += dt;
   const p = R.p;
   if (R.kind === 'day') {
-    if (R.phase === 'day' && R.t >= dayLen()) { R.phase = 'dusk'; R.t = 0; toast('해가 집니다. 캠프 불빛 근처로 돌아가세요', 'red'); sfx('warning', { pulses: 2 }); }
+    if (R.phase === 'day' && R.t >= dayLen()) { R.phase = 'dusk'; R.t = 0; toast('Dusk falls. Get back to the campfire light', 'red'); sfx('warning', { pulses: 2 }); }
     else if (R.phase === 'dusk' && R.t >= DUSK_LEN) startNight();
     else if (R.phase === 'night' && R.t >= NIGHT_LEN) { endDay(true); return; }
   } else if (R.t >= D.boss.timeLimitSec) { loseBoss(true); return; }
@@ -304,7 +305,7 @@ function startNight() {
   R.phase = 'night'; R.t = 0;
   R.toSpawn = R.info.nightSpawnCount; R.spawned = 0;
   p_gatherReset();
-  toast(`${S.day}일차 밤. 몬스터가 몰려옵니다`, 'red');
+  toast(`Night ${S.day}. The horde is coming`, 'red');
   sfx('warning'); Snd.setMusicIntensity(2);
 }
 function p_gatherReset() { if (R.p.gathering) R.p.gathering = null; }
@@ -346,7 +347,7 @@ function spawnElite(eid) {
   e.hp = e.max = avg * Math.pow(R.info.hpMult, HP_SOFT) * RULES.eliteHpMult;
   e.gold = MON[el.base].gold * R.info.goldMult * RULES.eliteGoldMult;
   e.r = e.look.r * 2.2; e.look = { ...e.look, size: e.look.size * 2.3 }; e.sp *= 0.8; e.dmg *= 2; e.atk = 3;
-  toast(`엘리트 등장: ${el.name}`, 'red'); sfx('warning', { pulses: 4 });
+  toast(`Elite spawned: ${el.name}`, 'red'); sfx('warning', { pulses: 4 });
 }
 function updateEnemy(e, dt) {
   const p = R.p;
@@ -381,7 +382,7 @@ function updateEnemy(e, dt) {
 function eliteSkill(e, dt) {
   e.atk -= dt; if (e.atk > 0) return;
   const id = e.elite.id;
-  if (id === 'alpha_dog') { for (let i = 0; i < 10; i++) spawnMon('dog', 0, { x: e.x + rand(-90, 90), y: e.y + rand(-90, 90) }, 0.6); e.atk = 14; toast('송곳니가 부하를 부릅니다', 'red'); }
+  if (id === 'alpha_dog') { for (let i = 0; i < 10; i++) spawnMon('dog', 0, { x: e.x + rand(-90, 90), y: e.y + rand(-90, 90) }, 0.6); e.atk = 14; toast('Fang calls the pack!', 'red'); }
   else if (id === 'grey_ogre') { R.warns.push({ x: R.p.x, y: R.p.y, r: 170, t: 1.1, dur: 1.1, dmg: e.dmg * 1.2, stun: true }); e.atk = 5; }
   else if (id === 'wraith_lord' || id === 'nightmare') { for (let i = 0; i < 3; i++) { const c = spawnMon('wraith', 0, { x: e.x + rand(-120, 120), y: e.y + rand(-120, 120) }, 0.4); c.gold *= 0.3; } e.atk = 9; }
   else e.atk = 99;
@@ -470,7 +471,7 @@ function killEnemy(e) {
     const cr = RULES.crystalPerElite.base + RULES.crystalPerElite.perDay * S.day;
     drop('crystal', cr, e.x, e.y);
     R.loot.sp += RULES.skillPointPerElite; S.sp += RULES.skillPointPerElite;
-    toast(`${e.name} 처치! 크리스탈 +${Math.round(cr)}, 스킬 포인트 +1`, 'gold'); R.shake = 14;
+    toast(`${e.name} down! Crystal +${Math.round(cr)}, Skill point +1`, 'gold'); R.shake = 14;
     if (e.elite.id === 'queen_bug') for (let i = 0; i < 20; i++) spawnMon('bugs', 0, { x: e.x + rand(-80, 80), y: e.y + rand(-80, 80) }, 0.5);
   }
   if (e.gold > 0) { const coins = Math.min(5, 1 + Math.floor(Math.log10(e.gold + 1) * 1.5)); for (let i = 0; i < coins; i++) drop('gold', e.gold * E.goldMult / coins, e.x, e.y); }
@@ -498,7 +499,7 @@ function hurtPlayer(d, poison) {
 function playerDown() {
   const p = R.p;
   if (R.over) return;
-  if (p.revive) { p.revive = false; p.hp = maxHp() * 0.5; p.inv = 2; p.poison = 0; toast('두 번째 기회! 다시 일어났습니다', 'gold'); return; }
+  if (p.revive) { p.revive = false; p.hp = maxHp() * 0.5; p.inv = 2; p.poison = 0; toast('Second Chance! You got back up', 'gold'); return; }
   if (R.boss) loseBoss(false); else endDay(false);
 }
 function pop(x, y, txt, col, size = 1) { R.pops.push({ x, y, txt, col, size, life: 0.8 }); }
@@ -522,7 +523,7 @@ function endDay(survived) {
   save();
   if (bot.on) { mode = 'hub'; return; }
   setTimeout(goHub, survived ? 300 : 900);
-  if (!survived) { toast('쓰러졌습니다. 골드 절반만 챙겨 캠프로 돌아갑니다', 'red'); }
+  if (!survived) { toast('You went down. Returning to camp with half your gold', 'red'); }
 }
 function winBoss() {
   R.over = true; S.won = true; save();
@@ -534,7 +535,7 @@ function loseBoss(timeout) {
   R.over = true; save();
   if (bot.on) { mode = 'hub'; return; }
   const left = Math.round(R.bossObj.hp / R.bossObj.max * 100);
-  showModal(`<h2>${timeout ? '시간 초과' : '패배'}</h2><p>${D.boss.name}의 체력을 ${left}% 남겼습니다. ${timeout ? `제한 시간 ${D.boss.timeLimitSec}초 안에 쓰러뜨려야 합니다.` : ''} 잃은 것은 없으니 캠프에서 더 강해져서 다시 도전하세요.</p><div class="acts"><button class="gt-btn gt-btn--primary" data-act="hub">캠프로</button></div>`);
+  showModal(`<h2>${timeout ? 'TIME UP' : 'DEFEATED'}</h2><p>${D.boss.name} has ${left}% HP left. ${timeout ? `You must win within ${D.boss.timeLimitSec}s.` : ''} You lost nothing. Get stronger at camp and try again.</p><div class="acts"><button class="gt-btn gt-btn--primary" data-act="hub">Back to camp</button></div>`);
 }
 
 /* ================= 저장 ================= */
@@ -595,29 +596,29 @@ function updateHud() {
   const p = R.p, g = gunStats(S.gun);
   $('hpBar').style.setProperty('--value', clamp(p.hp / maxHp() * 100, 0, 100));
   $('hpTxt').textContent = Math.max(0, Math.ceil(p.hp));
-  $('spTxt').textContent = `스킬 포인트 ${S.sp}` + (p.poison > 0 ? ' · 중독' : '') + (p.stun > 0 ? ' · 기절' : '');
+  $('spTxt').textContent = `Skill points ${S.sp}` + (p.poison > 0 ? ' · Poisoned' : '') + (p.stun > 0 ? ' · Stunned' : '');
   const clock = $('clock');
   clock.classList.toggle('is-night', R.phase === 'night' || R.phase === 'dusk');
   clock.classList.toggle('is-boss', R.boss);
   if (R.boss) {
     const left = Math.ceil(D.boss.timeLimitSec - R.t);
-    $('dayTxt').textContent = '보스전'; $('phaseTxt').textContent = '결전';
-    $('clockHint').textContent = `제한 시간 ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+    $('dayTxt').textContent = 'BOSS FIGHT'; $('phaseTxt').textContent = 'FINAL';
+    $('clockHint').textContent = `Time limit ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
     $('clockSun').style.left = (R.t / D.boss.timeLimitSec * 100) + '%';
   } else {
-    $('dayTxt').textContent = S.day + '일차';
+    $('dayTxt').textContent = 'Day ' + S.day;
     const dl = dayLen(), total = dl + DUSK_LEN + NIGHT_LEN;
     const el = R.phase === 'day' ? R.t : R.phase === 'dusk' ? dl + R.t : dl + DUSK_LEN + R.t;
     $('clockSun').style.left = (el / total * 100) + '%';
-    $('phaseTxt').textContent = R.phase === 'day' ? '낮' : R.phase === 'dusk' ? '해 질 녘' : '밤';
+    $('phaseTxt').textContent = R.phase === 'day' ? 'Day' : R.phase === 'dusk' ? 'Dusk' : 'Night';
     const left = Math.ceil(R.phase === 'day' ? dl - R.t : R.phase === 'dusk' ? DUSK_LEN - R.t : NIGHT_LEN - R.t);
-    $('clockHint').textContent = R.phase === 'day' ? (p.gathering ? `채집 중 ${Math.round(p.gathering.prog * 100)}%` : `자원 옆에 멈춰 서면 채집합니다 · 밤까지 ${left}초`) : R.phase === 'dusk' ? `몬스터가 깨어납니다 · ${left}초` : `새벽까지 ${left}초 · 남은 몬스터 ${R.enemies.length + R.toSpawn - R.spawned}`;
+    $('clockHint').textContent = R.phase === 'day' ? (p.gathering ? `Gathering ${Math.round(p.gathering.prog * 100)}%` : `Stand still next to resources to gather · Night in ${left}s`) : R.phase === 'dusk' ? `Monsters are waking · ${left}s` : `Dawn in ${left}s · Monsters left ${R.enemies.length + R.toSpawn - R.spawned}`;
   }
   $('resPanel').innerHTML = ['gold', 'scrap', 'crystal'].map(k => `<div class="res res-${k}"><img src="design/icons/${k === 'gold' ? 'ui-coin' : 'res-' + k}.svg" alt=""><span>${RES_NAME[k]}</span><b>${kfmt(S[k])}</b></div>`).join('');
   $('gunName').textContent = g.name;
   const src = 'design/icons/' + g.icon + '.svg';
   if (!$('gunIcon').src.endsWith(src)) $('gunIcon').src = src;
-  $('ammoTxt').textContent = R.reload > 0 ? '장전 중' : `${R.ammo} / ${g.mag}`;
+  $('ammoTxt').textContent = R.reload > 0 ? 'RELOADING' : `${R.ammo} / ${g.mag}`;
   $('reloadBar').style.setProperty('--value', R.reload > 0 ? (1 - R.reload / g.reload) * 100 : R.ammo / g.mag * 100);
   const bb = $('bossBar');
   bb.hidden = !R.bossObj && !R.enemies.some(e => e.elite);
@@ -634,7 +635,7 @@ const costOf = (spec, lv) => {
 };
 const canPay = c => Object.keys(c).every(k => S[k] >= c[k] - 1e-9);
 const pay = c => { for (const k in c) S[k] -= c[k]; };
-const costHtml = c => Object.keys(c).length ? Object.keys(c).map(k => `<span class="cost">${kfmt(c[k])} ${RES_NAME[k]}</span>`).join('') : '<span class="cost">무료</span>';
+const costHtml = c => Object.keys(c).length ? Object.keys(c).map(k => `<span class="cost">${kfmt(c[k])} ${RES_NAME[k]}</span>`).join('') : '<span class="cost">Free</span>';
 const gunCost = g => { const c = {}; for (const k in g.cost) c[k] = Math.ceil(g.cost[k] * (k === 'gold' ? E.shopDiscount : 1)); return c; };
 
 function goHub() {
@@ -648,19 +649,19 @@ function goHub() {
 }
 function renderHub() {
   refreshEff();
-  $('hubEyebrow').textContent = `${S.day}일차 아침`;
+  $('hubEyebrow').textContent = `Day ${S.day} morning`;
   $('hubWallet').innerHTML = ['gold', 'scrap', 'crystal'].map(k => `<div class="gt-stat ${k === 'gold' ? 'gt-stat--money' : ''}"><img class="gt-icon gt-icon--sm" src="design/icons/${k === 'gold' ? 'ui-coin' : 'res-' + k}.svg" alt=""><span class="gt-stat__label">${RES_NAME[k]}</span><span class="gt-stat__value">${kfmt(S[k])}</span></div>`).join('') + `<div class="gt-stat"><img class="gt-icon gt-icon--sm" src="design/icons/ui-skill.svg" alt=""><span class="gt-stat__label">스킬</span><span class="gt-stat__value" style="color:var(--gt-purple)">${S.sp}</span></div>`;
   const L = S.last;
   const row = (a, b, cls = '') => `<span>${a}</span><b class="${cls}">${b}</b>`;
   if (L) {
-    $('ledger').innerHTML = row(`${L.day}일차 밤`, L.survived ? '버팀' : '쓰러짐', L.survived ? 'hl' : 'bad') + row('처치한 몬스터', kfmt(L.kills)) + row('주운 골드', kfmt(L.loot.gold)) + (L.lost ? row('쓰러져서 잃은 골드', '−' + kfmt(L.lost), 'bad') : '') + row('모은 고철', kfmt(L.loot.scrap)) + (L.loot.crystal >= 1 ? row('모은 크리스탈', kfmt(L.loot.crystal)) : '') +
-      '<hr>' + row('아침 생산 골드', '+' + kfmt(L.prod.gold), 'hl') + row('아침 생산 고철', '+' + kfmt(L.prod.scrap)) + row('하루 보상', '스킬 포인트 +1', 'hl');
-  } else $('ledger').innerHTML = row('첫날', '') + '<span class="note">낮에는 고철 더미, 부서진 차량, 보급 상자 옆에 멈춰 서서 채집하세요. 밤에는 사방에서 몬스터가 달려옵니다.</span>';
+    $('ledger').innerHTML = row(`Night ${L.day}`, L.survived ? 'Survived' : 'Down', L.survived ? 'hl' : 'bad') + row('Monsters killed', kfmt(L.kills)) + row('Gold looted', kfmt(L.loot.gold)) + (L.lost ? row('Gold lost', '−' + kfmt(L.lost), 'bad') : '') + row('Scrap collected', kfmt(L.loot.scrap)) + (L.loot.crystal >= 1 ? row('Crystals collected', kfmt(L.loot.crystal)) : '') +
+      '<hr>' + row('Morning gold', '+' + kfmt(L.prod.gold), 'hl') + row('Morning scrap', '+' + kfmt(L.prod.scrap)) + row('Daily reward', 'Skill point +1', 'hl');
+  } else $('ledger').innerHTML = row('Day one', '') + '<span class="note">By day, stand next to scrap heaps, wrecked cars and supply crates to gather. By night, monsters rush in from every side.</span>';
   const pw = bestPower(), req = bossReq();
   $('powerNow').textContent = kfmt(pw); $('powerReq').textContent = kfmt(req);
   $('powerBar').style.setProperty('--value', clamp(pw / req * 100, 0, 100));
-  $('btnNextDay').textContent = `${S.day}일차 시작`;
-  $('btnBoss').textContent = S.won ? '보스 다시 잡기' : '보스에 도전하기';
+  $('btnNextDay').textContent = `START DAY ${S.day}`;
+  $('btnBoss').textContent = S.won ? 'FIGHT THE BOSS AGAIN' : 'CHALLENGE THE BOSS';
   document.querySelectorAll('#hubTabs .gt-tab').forEach(b => {
     b.classList.toggle('is-active', b.dataset.tab === hubTab);
     if (b.dataset.tab === 'skill') b.textContent = 'SKILLS';
@@ -670,47 +671,50 @@ function renderHub() {
 function card({ id, icon, tier, name, lv, desc, cost, state, label }) {
   const ok = cost && canPay(cost);
   const cls = state === 'max' ? 'is-maxed' : state === 'locked' ? 'is-locked' : state === 'equip' || state === 'equipped' ? (state === 'equipped' ? 'is-equipped' : '') : ok ? 'is-affordable' : 'is-expensive';
-  const btn = state === 'max' ? '<button class="gt-card__price" disabled>최대</button>'
-    : state === 'equipped' ? '<button class="gt-card__price" disabled>장착 중</button>'
-    : state === 'equip' ? `<button class="gt-card__price" data-act="${id}">장착<small>보유</small></button>`
+  const btn = state === 'max' ? '<button class="gt-card__price" disabled>MAX</button>'
+    : state === 'equipped' ? '<button class="gt-card__price" disabled>EQUIPPED</button>'
+    : state === 'equip' ? `<button class="gt-card__price" data-act="${id}">Equip<small>Owned</small></button>`
     : state === 'locked' ? `<button class="gt-card__price" disabled><img class="gt-icon gt-icon--sm" src="design/icons/ui-lock.svg" alt="">${label}</button>`
-    : `<button class="gt-card__price" data-act="${id}">${costHtml(cost)}<small>${ok ? label || '구매' : '부족'}</small></button>`;
+    : `<button class="gt-card__price" data-act="${id}">${costHtml(cost)}<small>${ok ? label || 'Buy' : 'Need more'}</small></button>`;
   return `<div class="gt-card gt-tier-${tier} ${cls}" id="card-${id}"><div class="gt-card__icon"><img src="design/icons/${icon}.svg" alt=""></div><div><div class="gt-card__name">${name}${lv ? `<span class="gt-card__level">${lv}</span>` : ''}</div><div class="gt-card__desc">${desc}</div></div>${btn}</div>`;
 }
 function shopHtml() {
   const guns = GUNS.map((g, i) => {
     const own = S.guns[g.id], st = gunStats(g.id), locked = !own && g.unlockDay > S.day;
-    const desc = `피해 ${kfmt(st.dmg)}${g.pellets > 1 ? '×' + g.pellets : ''} · 초당 ${st.rate.toFixed(1)}발 · 탄창 ${st.mag} · 사거리 ${g.range}${st.hits > 1 ? ` · 관통 ${st.hits - 1}` : ''}<br>화력 <span class="up">${kfmt(power(g.id))}</span>`;
-    return card({ id: 'gun-' + g.id, icon: st.icon, tier: st.tier, name: g.name, lv: `[${i + 1}]`, desc, cost: gunCost(g), state: own ? (S.gun === g.id ? 'equipped' : 'equip') : locked ? 'locked' : 'buy', label: locked ? `${g.unlockDay}일차` : '구매' });
+    const desc = `Damage ${kfmt(st.dmg)}${g.pellets > 1 ? '×' + g.pellets : ''} · ${st.rate.toFixed(1)}/s · Mag ${st.mag} · Range ${g.range}${st.hits > 1 ? ` · Pierce ${st.hits - 1}` : ''}<br>Power <span class="up">${kfmt(power(g.id))}</span>`;
+    return card({ id: 'gun-' + g.id, icon: st.icon, tier: st.tier, name: g.name, lv: `[${i + 1}]`, desc, cost: gunCost(g), state: own ? (S.gun === g.id ? 'equipped' : 'equip') : locked ? 'locked' : 'buy', label: locked ? `Day ${g.unlockDay}` : 'Buy' });
   }).join('');
   const ups = D.shopUpgrades.filter(u => u.cat === '무기 강화').map(u => upCard(u, { power: 'ui-damage', rof: 'ui-firerate', mag: 'ui-ammo' }[u.id])).join('');
-  return `<p class="sec-title">무기 강화 · 모든 총에 적용</p>${ups}<p class="sec-title">총기</p>${guns}`;
+  return `<p class="sec-title">Weapon upgrades · apply to every gun</p>${ups}<p class="sec-title">Guns</p>${guns}`;
 }
 function upCard(u, icon) {
   const l = upLv(u.id), max = l >= u.max;
-  return card({ id: 'up-' + u.id, icon, tier: Math.min(5, 1 + Math.floor(l / Math.max(2, u.max / 5))), name: u.name, lv: `Lv ${l}/${u.max}`, desc: u.desc, cost: costOf(u.cost, l), state: max ? 'max' : 'buy', label: '강화' });
+  return card({ id: 'up-' + u.id, icon, tier: Math.min(5, 1 + Math.floor(l / Math.max(2, u.max / 5))), name: u.name, lv: `Lv ${l}/${u.max}`, desc: u.desc, cost: costOf(u.cost, l), state: max ? 'max' : 'buy', label: 'Upgrade' });
 }
 function gearHtml() {
   const icons = { armor: 'ui-heart', boots: 'ui-upgrade', tools: 'ui-worker', medkit: 'ui-heart' };
-  return `<p class="sec-title">장비 · 고철로 삽니다</p>` + D.shopUpgrades.filter(u => u.cat === '장비').map(u => upCard(u, icons[u.id])).join('') +
-    `<p class="sec-title">지금 체력 ${Math.round(maxHp())} · 방어 ${Math.round(armorVal())} · 채집 속도 ×${gatherRate().toFixed(2)}</p>`;
+  return `<p class="sec-title">Gear · bought with scrap</p>` + D.shopUpgrades.filter(u => u.cat === '장비').map(u => upCard(u, icons[u.id])).join('') +
+    `<p class="sec-title">Current HP ${Math.round(maxHp())} · Armor ${Math.round(armorVal())} · Gather speed ×${gatherRate().toFixed(2)}</p>`;
 }
 function buildHtml() {
   const icons = { scrapper: 'ui-factory', shop: 'ui-coin', turret: 'ui-damage', barricade: 'ui-lock', lamp: 'ui-sun', turretup: 'ui-upgrade' };
-  return '<p class="sec-title">캠프 시설 · 매일 아침 생산하거나 밤에 캠프를 지킵니다</p>' + D.buildings.map(b => {
+  return '<p class="sec-title">Base buildings · produce every morning or defend camp at night</p>' + D.buildings.map(b => {
     const n = bLv(b.id), max = n >= b.max, locked = b.unlockDay > S.day;
     let info = b.desc;
-    if (b.produces) { const k = Object.keys(b.produces)[0]; const per = b.produces[k] * E.buildingMult * (k === 'gold' && b.cost.goldMult ? Math.pow(b.cost.goldMult, S.day - 1) : 1); info += `<br>하루 ${RES_NAME[k]} <span class="up">+${kfmt(per)}</span>/개 · 지금 ${kfmt(per * n)}`; }
-    if (b.id === 'turret') info += `<br>포탑 ${n}개 · 개당 초당 피해 ${kfmt(b.dps * (1 + 0.12 * upLv('power')) * Math.pow(1.35, bLv('turretup')))}`;
-    return card({ id: 'bld-' + b.id, icon: icons[b.id], tier: Math.min(5, 1 + Math.floor(n / 3)), name: b.name, lv: `${n}/${b.max}`, desc: info, cost: costOf(b.cost, n), state: max ? 'max' : locked ? 'locked' : 'buy', label: locked ? `${b.unlockDay}일차` : n ? '증설' : '건설' });
+    if (b.produces) { const k = Object.keys(b.produces)[0]; const per = b.produces[k] * E.buildingMult * (k === 'gold' && b.cost.goldMult ? Math.pow(b.cost.goldMult, S.day - 1) : 1); info += `<br>Per day ${RES_NAME[k]} <span class="up">+${kfmt(per)}</span>/each · now ${kfmt(per * n)}`; }
+    if (b.id === 'turret') info += `<br>Turrets ${n} · DPS each ${kfmt(b.dps * (1 + 0.12 * upLv('power')) * Math.pow(1.35, bLv('turretup')))}`;
+    return card({ id: 'bld-' + b.id, icon: icons[b.id], tier: Math.min(5, 1 + Math.floor(n / 3)), name: b.name, lv: `${n}/${b.max}`, desc: info, cost: costOf(b.cost, n), state: max ? 'max' : locked ? 'locked' : 'buy', label: locked ? `Day ${b.unlockDay}` : n ? 'Expand' : 'Build' });
   }).join('');
 }
+const SKILL_ICO = { s1: 'gun-crit', s2: 'gun-rapid', s3: 'gun-crit', s4: 'gun-pierce', s5: 'gun-explosive', s6: 'gun-spread', s7: 'gun-fire-orb', s8: 'gun-explosive', s9: 'gun-rapid', s10: 'gun-fire-orb', s11: 'gun-pierce', s12: 'gun-crit', s13: 'gun-explosive', s14: 'gun-spread',
+  v1: 'surv-maxhp', v2: 'surv-speed', v3: 'surv-regen', v4: 'surv-armor', v5: 'surv-speed', v6: 'surv-revive', v7: 'surv-armor', v8: 'surv-regen', v9: 'surv-regen', v10: 'surv-speed', v11: 'surv-armor', v12: 'surv-maxhp', v13: 'surv-revive',
+  p1: 'gath-axe', p2: 'gath-magnet', p3: 'gath-backpack', p4: 'gath-crystal', p5: 'gath-pickaxe', p6: 'gath-turret', p7: 'gath-backpack', p8: 'gath-axe', p9: 'gath-backpack', p10: 'gath-crystal', p11: 'gath-pickaxe', p12: 'gath-turret', p13: 'gath-crystal' };
 function skillHtml() {
   return `<p class="sp-note">Skill points <b>${S.sp}</b> · +1 each morning and +1 per elite kill. Unlock the previous node to open the next.</p><div class="tree">` + BRANCHES.map(br => `<div class="branch"><h4>${br}</h4>` + SKILLS.filter(s => s.branch === br).map(s => {
     const have = !!S.skills[s.id], open = s.requires.every(r => S.skills[r]);
     const cls = have ? 'max' : !open ? 'locked' : S.sp >= s.cost ? 'can' : '';
-    const req = s.requires.length ? `<em>필요: ${s.requires.map(r => SKILLS.find(x => x.id === r).name).join(', ')}</em>` : '';
-    return `<button class="skill ${cls}" data-act="sk-${s.id}"><span class="skill-top"><b>${s.name}</b><span class="skill-cost">${have ? '배움' : s.cost + '점'}</span></span><small>${s.desc}</small>${req}</button>`;
+    const req = s.requires.length ? `<em>Requires: ${s.requires.map(r => SKILLS.find(x => x.id === r).name).join(', ')}</em>` : '';
+    return `<button class="skill ${cls}" data-act="sk-${s.id}"><span class="skill-top"><img class="skill-ico" src="design/assets/skills/${SKILL_ICO[s.id]}.png" alt=""><b>${s.name}</b><span class="skill-cost">${have ? 'Learned' : s.cost + ' SP'}</span></span><small>${s.desc}</small>${req}</button>`;
   }).join('') + '</div>').join('') + '</div>';
 }
 function hubAction(act) {
@@ -718,13 +722,13 @@ function hubAction(act) {
   if (kind === 'gun') {
     const g = GUNS.find(x => x.id === id);
     if (S.guns[id]) { S.gun = id; sfx('click'); }
-    else { if (g.unlockDay > S.day) return deny(); const c = gunCost(g); if (!canPay(c)) return deny(); pay(c); S.guns[id] = true; S.gun = id; sfx('buy'); toast(`${g.name} 구매`, 'gold'); }
+    else { if (g.unlockDay > S.day) return deny(); const c = gunCost(g); if (!canPay(c)) return deny(); pay(c); S.guns[id] = true; S.gun = id; sfx('buy'); toast(`${g.name} purchased`, 'gold'); }
   } else if (kind === 'up') {
     const u = D.shopUpgrades.find(x => x.id === id), c = costOf(u.cost, upLv(id));
     if (upLv(id) >= u.max || !canPay(c)) return deny(); pay(c); S.up[id] = upLv(id) + 1; sfx('upgrade');
   } else if (kind === 'bld') {
     const b = D.buildings.find(x => x.id === id), c = costOf(b.cost, bLv(id));
-    if (bLv(id) >= b.max || b.unlockDay > S.day || !canPay(c)) return deny(); pay(c); S.build[id] = bLv(id) + 1; sfx('buy'); toast(`${b.name} ${S.build[id]}개`, 'gold');
+    if (bLv(id) >= b.max || b.unlockDay > S.day || !canPay(c)) return deny(); pay(c); S.build[id] = bLv(id) + 1; sfx('buy'); toast(`${b.name} x${S.build[id]}`, 'gold');
   } else if (kind === 'sk') {
     const s = SKILLS.find(x => x.id === id);
     if (S.skills[id] || S.sp < s.cost || !s.requires.every(r => S.skills[r])) return deny();
@@ -750,7 +754,7 @@ function showModal(html, cls = '') { $('modalBox').className = 'gt-modal ' + cls
 function showWin() {
   const m = Math.floor(S.stats.played / 60);
   $('ending').hidden = false; $('hud').hidden = true;
-  const st = [['버틴 날', `${S.day - 1}일`], ['플레이 시간', `${Math.floor(m / 60)}시간 ${m % 60}분`], ['처치한 몬스터', kfmt(S.stats.kills)], ['번 골드', kfmt(S.stats.goldTotal)], ['보스 도전', `${S.stats.bossTries}번`], ['쓰러진 밤', `${S.stats.deaths}번`]];
+  const st = [['Days survived', `${S.day - 1}`], ['Play time', `${Math.floor(m / 60)}h ${m % 60}m`], ['Monsters killed', kfmt(S.stats.kills)], ['Gold earned', kfmt(S.stats.goldTotal)], ['Boss attempts', `${S.stats.bossTries}`], ['Nights down', `${S.stats.deaths}`]];
   $('endStats').innerHTML = st.map(([a, b]) => `<div class="gt-ending__stat"><b>${b}</b><span>${a}</span></div>`).join('');
   Snd.play('upgrade');
 }
@@ -766,14 +770,14 @@ function startDay(kind) {
   $('dashBtn').hidden = !touchMode;
   view.setMode('run', S, R);
   Snd.startMusic(); Snd.setMusicIntensity(kind === 'boss' ? 2 : 1);
-  if (kind === 'boss') { toast(`결전: ${D.boss.name}`, 'red'); sfx('warning', { pulses: 5 }); }
-  else toast(`${S.day}일차 아침`, 'gold');
+  if (kind === 'boss') { toast(`FINAL BATTLE: ${D.boss.name}`, 'red'); sfx('warning', { pulses: 5 }); }
+  else toast(`Day ${S.day} morning`, 'gold');
   updateHud();
 }
 function setPause(v) {
   if (mode !== 'run' || !R || R.over) return;
   paused = v;
-  if (v) showModal(`<h2>일시정지</h2><p>${R.boss ? '보스전' : S.day + '일차'} 진행 중입니다.</p><div class="acts"><button class="gt-btn gt-btn--primary" data-act="resume">계속</button><button class="gt-btn gt-btn--ghost" data-act="mute">${Snd.isMuted() ? '소리 켜기' : '소리 끄기'}</button><button class="gt-btn gt-btn--ghost" data-act="giveup">${R.boss ? '포기하고 캠프로' : '오늘은 접고 캠프로'}</button></div>`);
+  if (v) showModal(`<h2>PAUSED</h2><p>${R.boss ? 'Boss fight' : 'Day ' + S.day} in progress.</p><div class="acts"><button class="gt-btn gt-btn--primary" data-act="resume">Resume</button><button class="gt-btn gt-btn--ghost" data-act="mute">${Snd.isMuted() ? 'Sound on' : 'Sound off'}</button><button class="gt-btn gt-btn--ghost" data-act="giveup">${R.boss ? 'Give up and return to camp' : 'End the day and return to camp'}</button></div>`);
   else { $('modal').hidden = true; lockPointer(); }
 }
 document.addEventListener('click', ev => {
@@ -783,24 +787,24 @@ document.addEventListener('click', ev => {
   else if (a === 'resume') setPause(false);
   else if (a === 'giveup') { $('modal').hidden = true; paused = false; if (R.boss) { R.over = true; goHub(); } else endDay(false); }
   else if (a === 'mute') { Snd.toggleMute(); setPause(true); }
-  else if (a === 'reset') { if (b.dataset.confirm) { S = newState(); refreshEff(); save(); $('ending').hidden = true; goHub(); } else { b.dataset.confirm = '1'; b.textContent = '한 번 더 누르면 기록을 모두 지웁니다'; } }
+  else if (a === 'reset') { if (b.dataset.confirm) { S = newState(); refreshEff(); save(); $('ending').hidden = true; goHub(); } else { b.dataset.confirm = '1'; b.textContent = 'Press again to erase all progress'; } }
   else if (mode === 'hub') hubAction(a);
 });
 $('hubTabs').addEventListener('click', ev => { const t = ev.target.closest('.gt-tab'); if (!t) return; hubTab = t.dataset.tab; sfx('click'); renderHub(); });
 $('btnNextDay').onclick = () => startDay('day');
 $('btnBoss').onclick = () => {
   const pw = bestPower();
-  if (pw < bossReq() * 0.5 && !$('btnBoss').dataset.warned) { $('btnBoss').dataset.warned = '1'; $('btnBoss').textContent = '화력이 많이 부족합니다. 그래도 도전'; return; }
+  if (pw < bossReq() * 0.5 && !$('btnBoss').dataset.warned) { $('btnBoss').dataset.warned = '1'; $('btnBoss').textContent = 'Not enough firepower. Challenge anyway'; return; }
   delete $('btnBoss').dataset.warned; startDay('boss');
 };
 let hasSave = false;
 $('btnNew').onclick = () => {
-  if (hasSave && !$('btnNew').dataset.confirm) { $('btnNew').dataset.confirm = '1'; $('btnNew').textContent = '저장을 지우고 새로 시작'; return; }
+  if (hasSave && !$('btnNew').dataset.confirm) { $('btnNew').dataset.confirm = '1'; $('btnNew').textContent = 'Erase save and start over'; return; }
   S = newState(); refreshEff(); save(); startDay('day');
 };
 $('btnContinue').onclick = () => goHub();
 $('btnPause').onclick = () => setPause(true);
-$('btnSound').onclick = () => { const m = Snd.toggleMute(); $('btnSound').textContent = m ? '소리 꺼짐' : '소리 켜짐'; };
+$('btnSound').onclick = () => { const m = Snd.toggleMute(); $('btnSound').textContent = m ? 'Sound off' : 'Sound on'; };
 
 window.addEventListener('keydown', ev => {
   keys[ev.code] = true;
@@ -893,7 +897,7 @@ function frame(now) {
 hasSave = load();
 $('btnContinue').hidden = !hasSave;
 if (hasSave) $('btnNew').classList.replace('gt-btn--primary', 'gt-btn--ghost');
-if (touchMode) $('titleKeys').textContent = '손가락으로 끌어서 이동 · 조준과 사격은 자동 · 오른쪽 버튼으로 구르기';
+if (touchMode) $('titleKeys').textContent = 'Drag to move · aim and fire are automatic · right button to roll';
 view.setMode('title', S);
 document.body.classList.add('is-ready');
 requestAnimationFrame(frame);
