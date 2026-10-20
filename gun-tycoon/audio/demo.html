@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>총 타이쿤 사운드 테스트</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #15171c; color: #eee; margin: 0; padding: 16px; }
+  h1 { font-size: 20px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  button { background: #2b303b; color: #eee; border: 1px solid #444; border-radius: 6px; padding: 10px 14px; font-size: 15px; }
+  button:active { background: #3b4252; }
+  label { display: block; margin: 8px 0; }
+  input[type=range] { width: 220px; vertical-align: middle; }
+  #state { color: #9ad; }
+</style>
+</head>
+<body>
+<h1>총 타이쿤 사운드 테스트</h1>
+<p>상태: <span id="state">아직 잠김 (아무 곳이나 터치하세요)</span></p>
+
+<h3>효과음</h3>
+<div class="row" id="sfx"></div>
+<h3>총 종류별 발사음</h3>
+<div class="row" id="guns"></div>
+
+<h3>배경음악</h3>
+<div class="row">
+  <button id="musicOn">음악 시작</button>
+  <button id="musicOff">음악 정지</button>
+  <button data-int="0">잔잔하게</button>
+  <button data-int="1">보통</button>
+  <button data-int="2">전투</button>
+</div>
+
+<h3>볼륨</h3>
+<label>전체 <input type="range" min="0" max="1" step="0.01" data-vol="master"></label>
+<label>효과음 <input type="range" min="0" max="1" step="0.01" data-vol="sfx"></label>
+<label>음악 <input type="range" min="0" max="1" step="0.01" data-vol="music"></label>
+<button id="mute">음소거 전환</button>
+
+<script src="audio.js"></script>
+<script>
+  var A = window.GameAudio;
+  var names = { shoot: '발사', hit: '명중', kill: '적 처치', coin: '돈 획득', buy: '구매', upgrade: '업그레이드', warning: '경고', click: '클릭' };
+  A.sounds.forEach(function (s) {
+    var b = document.createElement('button');
+    b.textContent = names[s] || s;
+    b.onclick = function () { A.play(s); };
+    document.getElementById('sfx').appendChild(b);
+  });
+  A.shootVariants.forEach(function (v) {
+    var b = document.createElement('button');
+    b.textContent = v;
+    b.onclick = function () { A.play('shoot', { variant: v }); };
+    document.getElementById('guns').appendChild(b);
+  });
+  document.getElementById('musicOn').onclick = function () { A.startMusic(); };
+  document.getElementById('musicOff').onclick = function () { A.stopMusic(); };
+  document.querySelectorAll('[data-int]').forEach(function (b) {
+    b.onclick = function () { A.setMusicIntensity(+b.dataset.int); };
+  });
+  document.querySelectorAll('[data-vol]').forEach(function (r) {
+    r.value = A.getVolume(r.dataset.vol);
+    r.oninput = function () { A.setVolume(r.dataset.vol, +r.value); };
+  });
+  var st = document.getElementById('state');
+  document.getElementById('mute').onclick = function () { A.toggleMute(); };
+  setInterval(function () {
+    st.textContent = (A.isUnlocked() ? '재생 가능' : '아직 잠김 (아무 곳이나 터치하세요)') + (A.isMuted() ? ' · 음소거' : '') + (A.isMusicPlaying() ? ' · 음악 재생 중' : '');
+  }, 250);
+</script>
+</body>
+</html>

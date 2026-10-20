@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>총 타이쿤 디자인 미리보기</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .demo-gun { position:absolute; left:50%; bottom:24px; width:120px; transform:translateX(-50%); }
+  .demo-gun img { width:100%; display:block; }
+  .demo-row { display:flex; gap:10px; flex-wrap:wrap; padding:12px; }
+  .demo-row img { width:56px; height:56px; background:var(--gt-surface); border-radius:8px; padding:6px; }
+</style>
+</head>
+<body class="gt">
+<div class="gt-layout">
+  <header class="gt-hud">
+    <h1 class="gt-title" style="font-size:24px">총 타이쿤</h1>
+    <div class="gt-stat gt-stat--money"><img class="gt-icon" src="icons/ui-coin.svg" alt=""><span class="gt-stat__label">자금</span><span class="gt-stat__value" id="money">12,480</span></div>
+    <div class="gt-stat gt-stat--income"><img class="gt-icon" src="icons/ui-factory.svg" alt=""><span class="gt-stat__label">초당</span><span class="gt-stat__value">+320</span></div>
+    <div class="gt-stat gt-stat--ammo"><img class="gt-icon" src="icons/ui-ammo.svg" alt=""><span class="gt-stat__label">탄약</span><span class="gt-stat__value">24/30</span></div>
+    <div class="gt-stat gt-stat--wave"><span class="gt-stat__label">웨이브</span><span class="gt-stat__value">7</span></div>
+    <div class="gt-hud__spacer"></div>
+    <div style="width:180px"><div class="gt-stat__label">웨이브 진행</div><div class="gt-bar gt-bar--wave" style="--value:62"></div></div>
+    <button class="gt-btn gt-btn--sm gt-btn--ghost">설정</button>
+  </header>
+
+  <main class="gt-arena" id="arena">
+    <div class="gt-enemy" style="left:22%;top:30%"><div class="gt-bar gt-bar--hp" style="--value:80"></div><img src="icons/enemy-grunt.svg" alt="병사"></div>
+    <div class="gt-enemy" style="left:48%;top:22%"><div class="gt-bar gt-bar--hp" style="--value:45"></div><img src="icons/enemy-runner.svg" alt="돌격병"></div>
+    <div class="gt-enemy" style="left:72%;top:34%"><div class="gt-bar gt-bar--hp" style="--value:100"></div><img src="icons/enemy-tank.svg" alt="중장갑"></div>
+    <div class="gt-enemy" style="left:35%;top:55%"><div class="gt-bar gt-bar--hp" style="--value:60"></div><img src="icons/enemy-drone.svg" alt="드론"></div>
+    <div class="gt-enemy gt-enemy--boss" style="left:62%;top:60%"><div class="gt-bar gt-bar--hp" style="--value:72"></div><img src="icons/enemy-boss.svg" alt="보스"></div>
+    <div class="demo-gun" id="gun"><img src="icons/gun-rifle.svg" alt=""></div>
+    <div class="gt-float" style="left:24%;top:24%;animation-iteration-count:infinite">-128</div>
+    <div class="gt-float gt-float--crit" style="left:50%;top:16%;animation-iteration-count:infinite">-512!</div>
+    <div class="gt-float gt-float--money" style="left:70%;top:28%;animation-iteration-count:infinite">+₩ 85</div>
+  </main>
+
+  <aside class="gt-shop gt-panel">
+    <div class="gt-shop__header"><h2 class="gt-h2">무기 상점</h2><span class="gt-badge gt-badge--new">신규 2</span></div>
+    <nav class="gt-tabs"><button class="gt-tab is-active">총기</button><button class="gt-tab">강화</button><button class="gt-tab">공장</button><button class="gt-tab">특수</button></nav>
+    <div class="gt-shop__list">
+      <div class="gt-card gt-tier-1 is-maxed"><div class="gt-card__icon"><img src="icons/gun-pistol.svg" alt=""></div><div><div class="gt-card__name">권총<span class="gt-card__level">Lv.10</span></div><div class="gt-card__desc">기본 무기. 한 발씩 정확하게.</div></div><button class="gt-card__price">최대</button></div>
+      <div class="gt-card gt-tier-2 is-affordable gt-pulse"><div class="gt-card__icon"><img src="icons/gun-smg.svg" alt=""></div><div><div class="gt-card__name">기관단총<span class="gt-card__level">Lv.4</span></div><div class="gt-card__desc">연사 속도 +15%</div></div><button class="gt-card__price">1,200<small>구매</small></button></div>
+      <div class="gt-card gt-tier-2 is-affordable"><div class="gt-card__icon"><img src="icons/gun-shotgun.svg" alt=""></div><div><div class="gt-card__name">산탄총<span class="gt-card__level">Lv.2</span></div><div class="gt-card__desc">탄 5발이 퍼져 나간다.</div></div><button class="gt-card__price">3,400<small>구매</small></button></div>
+      <div class="gt-card gt-tier-3"><div class="gt-card__icon"><img src="icons/gun-rifle.svg" alt=""></div><div><div class="gt-card__name">돌격소총<span class="gt-card__level">Lv.1</span></div><div class="gt-card__desc">피해량과 연사 모두 균형.</div></div><button class="gt-card__price">9,800<small>구매</small></button></div>
+      <div class="gt-card gt-tier-4 is-expensive"><div class="gt-card__icon"><img src="icons/gun-sniper.svg" alt=""></div><div><div class="gt-card__name">저격총</div><div class="gt-card__desc">치명타 확률 +30%</div></div><button class="gt-card__price" disabled>48,000<small>부족</small></button></div>
+      <div class="gt-card gt-tier-4 is-locked"><div class="gt-card__icon"><img src="icons/gun-minigun.svg" alt=""></div><div><div class="gt-card__name">미니건</div><div class="gt-card__desc">웨이브 15에서 해금</div></div><button class="gt-card__price" disabled><img class="gt-icon gt-icon--sm" src="icons/ui-lock.svg" alt="">잠김</button></div>
+      <div class="gt-card gt-tier-5 is-locked"><div class="gt-card__icon"><img src="icons/gun-laser.svg" alt=""></div><div><div class="gt-card__name">레이저 소총</div><div class="gt-card__desc">웨이브 30에서 해금</div></div><button class="gt-card__price" disabled><img class="gt-icon gt-icon--sm" src="icons/ui-lock.svg" alt="">잠김</button></div>
+    </div>
+  </aside>
+</div>
+
+<div class="gt-panel" style="margin:12px">
+  <div class="demo-row">
+    <img src="icons/ui-damage.svg" alt=""><img src="icons/ui-firerate.svg" alt=""><img src="icons/ui-crit.svg" alt=""><img src="icons/ui-upgrade.svg" alt=""><img src="icons/ui-worker.svg" alt=""><img src="icons/enemy-target.svg" alt="">
+    <button class="gt-btn gt-btn--primary">웨이브 시작</button><button class="gt-btn">일시정지</button><button class="gt-btn gt-btn--danger">초기화</button>
+  </div>
+</div>
+<div class="gt-toast-stack"><div class="gt-toast gt-toast--gold" style="animation-iteration-count:infinite">기관단총 Lv.4 강화 완료!</div></div>
+
+<script>
+  // 클릭하면 반동, 총구 화염, 화면 흔들림 데모
+  const arena = document.getElementById('arena'), gun = document.getElementById('gun');
+  arena.addEventListener('click', e => {
+    const r = arena.getBoundingClientRect();
+    gun.classList.remove('gt-recoil'); void gun.offsetWidth; gun.classList.add('gt-recoil');
+    const m = document.createElement('div'); m.className = 'gt-muzzle';
+    m.style.left = (e.clientX - r.left) + 'px'; m.style.top = (e.clientY - r.top) + 'px';
+    arena.appendChild(m); m.addEventListener('animationend', () => m.remove());
+    const f = document.createElement('div'); f.className = 'gt-float'; f.textContent = '-' + (50 + Math.floor(Math.random()*100));
+    f.style.left = m.style.left; f.style.top = m.style.top; arena.appendChild(f); f.addEventListener('animationend', () => f.remove());
+  });
+</script>
+</body>
+</html>

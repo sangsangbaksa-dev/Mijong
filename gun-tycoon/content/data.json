@@ -1,0 +1,1468 @@
+{
+  "version": 2,
+  "meta": {
+    "title": "총 타이쿤",
+    "targetPlaytimeMin": 120,
+    "loop": "낮(자원 채집) → 밤(몬스터 처치) → 허브(상점·건설·스킬트리) → 다음 날. 허브의 '보스에 도전하기'로 보스를 이기면 엔딩",
+    "currencies": {
+      "gold": "골드: 밤 처치·보급 상자·무기 노점",
+      "scrap": "고철: 낮 채집·고철 분쇄기",
+      "crystal": "크리스탈: 엘리트 처치·빛나는 결정(6일차부터 하루 1개)",
+      "sp": "스킬 포인트: 하루 1, 엘리트 처치 1"
+    }
+  },
+  "formulas": {
+    "nightMonsterStat": "monster.hp * hpGrowthPerDay^(day-1), dmg * dmgGrowthPerDay^(day-1), gold * goldGrowthPerDay^(day-1)",
+    "nightSpawnCount": "baseCount + countPerDay*(day-1), 해금된 몬스터 중 weight 비율로 뽑기",
+    "eliteHp": "그날 몬스터 평균 체력 * eliteHpMult (elites[].base 몬스터 모습)",
+    "gunDamage": "gun.dmg * (1 + 0.12*화력강화Lv) * 스킬 dmgMult",
+    "gunFireRate": "gun.fireRate * (1 + 0.06*연사개조Lv) * 스킬 rateMult",
+    "magazine": "gun.magazine * (1 + 0.10*확장탄창Lv), reload = reloadSec * (1 - 0.04*확장탄창Lv)",
+    "crit": "확률 5% + 스킬 + 조명탑 3%/개, 치명 피해 x2 (+스킬 critDmg)",
+    "playerHp": "(100 + 25*방탄조끼Lv + 스킬 hpFlat) * 스킬 hpMult, 방어 = 4*방탄조끼Lv + 스킬 armorFlat",
+    "upgradeCost": "cost[통화] = [base, growth] → base * growth^현재레벨 (건물은 현재 개수)",
+    "dailyGather": "낮 채집은 맵 자원 지점 수집. 채집 속도 = 1 * (1+0.15*채집도구Lv) * 스킬 gatherMult (gatherSec 나누기)",
+    "morningProduction": "고철 분쇄기 30고철/개, 무기 노점 120*1.15^(day-1) 골드/개, 스킬 buildingMult 적용",
+    "turretDps": "25 * 개수 * (1 + 0.12*화력강화Lv) * 1.35^포탑개량Lv"
+  },
+  "rules": {
+    "dayDurationSec": 90,
+    "nightDurationSec": 120,
+    "mapSize": {
+      "w": 3200,
+      "h": 3200,
+      "unit": "px",
+      "note": "화면(약 1280x720)보다 훨씬 넓은 맵, 카메라가 플레이어를 따라감"
+    },
+    "playerBase": {
+      "hp": 100,
+      "armor": 0,
+      "regenPerSec": 0.5,
+      "moveSpeed": 220,
+      "gatherPerSec": 1.0,
+      "pickupRadius": 60
+    },
+    "armorFormula": "받는 피해 = 피해 * 100 / (100 + armor)",
+    "contactHitSec": 2.0,
+    "deathRule": "밤에 쓰러지면 그 밤은 즉시 끝나고, 그때까지 얻은 골드의 50%만 챙겨 허브로 돌아감. 날짜는 그대로 넘어감",
+    "deathLootKeep": 0.5,
+    "nightSpawn": {
+      "baseCount": 40,
+      "countPerDay": 9,
+      "hpGrowthPerDay": 1.3,
+      "goldGrowthPerDay": 1.15,
+      "dmgGrowthPerDay": 1.13,
+      "spawnRing": "화면 밖 원형 테두리에서 생성되어 플레이어를 향해 달려옴",
+      "rampNote": "밤 시작 20초는 등장 속도 50%, 마지막 30초는 150%"
+    },
+    "eliteEvery": 5,
+    "eliteHpMult": 30,
+    "eliteGoldMult": 20,
+    "crystalPerElite": {
+      "base": 3,
+      "perDay": 0.4
+    },
+    "skillPointPerDay": 1,
+    "skillPointPerElite": 1,
+    "multiTargetNote": "pierce 1당 무리 상대 효율 +40%, pellets는 산탄(각 탄이 dmg)",
+    "bossUnlockDay": 1,
+    "bossFightLimitSec": 180
+  },
+  "dayResources": [
+    {
+      "id": "scrap",
+      "name": "고철 더미",
+      "gives": "고철",
+      "amount": [
+        3,
+        6
+      ],
+      "gatherSec": 1.5,
+      "respawnSec": 25,
+      "unlockDay": 1
+    },
+    {
+      "id": "car",
+      "name": "부서진 차량",
+      "gives": "고철",
+      "amount": [
+        12,
+        20
+      ],
+      "gatherSec": 4.0,
+      "respawnSec": 60,
+      "unlockDay": 1
+    },
+    {
+      "id": "ammo",
+      "name": "보급 상자",
+      "gives": "골드",
+      "amount": [
+        20,
+        40
+      ],
+      "gatherSec": 2.0,
+      "respawnSec": 45,
+      "unlockDay": 1,
+      "scalesWithDay": 1.15
+    },
+    {
+      "id": "crystal",
+      "name": "빛나는 결정",
+      "gives": "크리스탈",
+      "amount": [
+        1,
+        1
+      ],
+      "gatherSec": 6.0,
+      "respawnSec": 90,
+      "unlockDay": 6,
+      "perDayMax": 1
+    }
+  ],
+  "monsters": [
+    {
+      "id": "dog",
+      "name": "굶주린 들개",
+      "hp": 14,
+      "dmg": 4,
+      "speed": 170,
+      "gold": 3,
+      "unlockDay": 1,
+      "weight": 4,
+      "trait": "빠르고 약함"
+    },
+    {
+      "id": "zombie",
+      "name": "썩은 좀비",
+      "hp": 34,
+      "dmg": 6,
+      "speed": 70,
+      "gold": 4,
+      "unlockDay": 1,
+      "weight": 5,
+      "trait": "느리고 무리 지어 옴"
+    },
+    {
+      "id": "boar",
+      "name": "돌연변이 멧돼지",
+      "hp": 63,
+      "dmg": 12,
+      "speed": 130,
+      "gold": 8,
+      "unlockDay": 3,
+      "weight": 3,
+      "trait": "가까워지면 돌진(속도 x2.5, 1초)"
+    },
+    {
+      "id": "bugs",
+      "name": "독침 벌레 떼",
+      "hp": 8,
+      "dmg": 3,
+      "speed": 150,
+      "gold": 1,
+      "unlockDay": 5,
+      "weight": 6,
+      "trait": "5마리씩 묶여 등장, 맞으면 2초간 독(초당 2)"
+    },
+    {
+      "id": "crab",
+      "name": "갑각 괴수",
+      "hp": 196,
+      "dmg": 18,
+      "speed": 60,
+      "gold": 20,
+      "unlockDay": 8,
+      "weight": 2,
+      "trait": "정면 피해 50% 감소, 관통 무시"
+    },
+    {
+      "id": "wolf",
+      "name": "그림자 늑대",
+      "hp": 77,
+      "dmg": 14,
+      "speed": 230,
+      "gold": 12,
+      "unlockDay": 11,
+      "weight": 3,
+      "trait": "지그재그로 달려와 맞히기 어려움"
+    },
+    {
+      "id": "shroom",
+      "name": "폭발 버섯",
+      "hp": 49,
+      "dmg": 40,
+      "speed": 90,
+      "gold": 10,
+      "unlockDay": 14,
+      "weight": 2,
+      "trait": "닿으면 자폭(범위 피해), 쏴서 터뜨리면 주변 몬스터도 피해"
+    },
+    {
+      "id": "ogre",
+      "name": "철갑 오우거",
+      "hp": 588,
+      "dmg": 35,
+      "speed": 55,
+      "gold": 60,
+      "unlockDay": 18,
+      "weight": 1,
+      "trait": "넉백 면역, 거대함"
+    },
+    {
+      "id": "wraith",
+      "name": "밤의 망령",
+      "hp": 126,
+      "dmg": 20,
+      "speed": 120,
+      "gold": 25,
+      "unlockDay": 22,
+      "weight": 2,
+      "trait": "3초마다 순간이동, 멀리서 저주탄 발사"
+    }
+  ],
+  "elites": [
+    {
+      "id": "alpha_dog",
+      "name": "우두머리 들개 '송곳니'",
+      "night": 5,
+      "base": "dog",
+      "trait": "부하 들개 10마리 소환"
+    },
+    {
+      "id": "king_boar",
+      "name": "멧돼지 왕",
+      "night": 10,
+      "base": "boar",
+      "trait": "연속 돌진 3회"
+    },
+    {
+      "id": "queen_bug",
+      "name": "벌레 여왕",
+      "night": 15,
+      "base": "bugs",
+      "trait": "죽을 때 벌레 떼 20마리"
+    },
+    {
+      "id": "grey_ogre",
+      "name": "회색 오우거",
+      "night": 20,
+      "base": "ogre",
+      "trait": "바닥 내려찍기(범위 기절)"
+    },
+    {
+      "id": "wraith_lord",
+      "name": "망령 군주",
+      "night": 25,
+      "base": "wraith",
+      "trait": "분신 3체"
+    },
+    {
+      "id": "nightmare",
+      "name": "악몽의 사도",
+      "night": 30,
+      "base": "wraith",
+      "trait": "30일 이후 5일마다 반복 등장"
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "nightSpawnCount": 40,
+      "hpMult": 1.0,
+      "dmgMult": 1.0,
+      "goldMult": 1.0,
+      "monsters": [
+        "dog",
+        "zombie"
+      ],
+      "elite": null
+    },
+    {
+      "day": 2,
+      "nightSpawnCount": 49,
+      "hpMult": 1.3,
+      "dmgMult": 1.13,
+      "goldMult": 1.15,
+      "monsters": [
+        "dog",
+        "zombie"
+      ],
+      "elite": null
+    },
+    {
+      "day": 3,
+      "nightSpawnCount": 58,
+      "hpMult": 1.69,
+      "dmgMult": 1.277,
+      "goldMult": 1.322,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar"
+      ],
+      "elite": null
+    },
+    {
+      "day": 4,
+      "nightSpawnCount": 67,
+      "hpMult": 2.197,
+      "dmgMult": 1.443,
+      "goldMult": 1.521,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar"
+      ],
+      "elite": null
+    },
+    {
+      "day": 5,
+      "nightSpawnCount": 76,
+      "hpMult": 2.856,
+      "dmgMult": 1.63,
+      "goldMult": 1.749,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs"
+      ],
+      "elite": "alpha_dog"
+    },
+    {
+      "day": 6,
+      "nightSpawnCount": 85,
+      "hpMult": 3.713,
+      "dmgMult": 1.842,
+      "goldMult": 2.011,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs"
+      ],
+      "elite": null
+    },
+    {
+      "day": 7,
+      "nightSpawnCount": 94,
+      "hpMult": 4.827,
+      "dmgMult": 2.082,
+      "goldMult": 2.313,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs"
+      ],
+      "elite": null
+    },
+    {
+      "day": 8,
+      "nightSpawnCount": 103,
+      "hpMult": 6.275,
+      "dmgMult": 2.353,
+      "goldMult": 2.66,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab"
+      ],
+      "elite": null
+    },
+    {
+      "day": 9,
+      "nightSpawnCount": 112,
+      "hpMult": 8.157,
+      "dmgMult": 2.658,
+      "goldMult": 3.059,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab"
+      ],
+      "elite": null
+    },
+    {
+      "day": 10,
+      "nightSpawnCount": 121,
+      "hpMult": 10.604,
+      "dmgMult": 3.004,
+      "goldMult": 3.518,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab"
+      ],
+      "elite": "king_boar"
+    },
+    {
+      "day": 11,
+      "nightSpawnCount": 130,
+      "hpMult": 13.786,
+      "dmgMult": 3.395,
+      "goldMult": 4.046,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf"
+      ],
+      "elite": null
+    },
+    {
+      "day": 12,
+      "nightSpawnCount": 139,
+      "hpMult": 17.922,
+      "dmgMult": 3.836,
+      "goldMult": 4.652,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf"
+      ],
+      "elite": null
+    },
+    {
+      "day": 13,
+      "nightSpawnCount": 148,
+      "hpMult": 23.298,
+      "dmgMult": 4.335,
+      "goldMult": 5.35,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf"
+      ],
+      "elite": null
+    },
+    {
+      "day": 14,
+      "nightSpawnCount": 157,
+      "hpMult": 30.288,
+      "dmgMult": 4.898,
+      "goldMult": 6.153,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom"
+      ],
+      "elite": null
+    },
+    {
+      "day": 15,
+      "nightSpawnCount": 166,
+      "hpMult": 39.374,
+      "dmgMult": 5.535,
+      "goldMult": 7.076,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom"
+      ],
+      "elite": "queen_bug"
+    },
+    {
+      "day": 16,
+      "nightSpawnCount": 175,
+      "hpMult": 51.186,
+      "dmgMult": 6.254,
+      "goldMult": 8.137,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom"
+      ],
+      "elite": null
+    },
+    {
+      "day": 17,
+      "nightSpawnCount": 184,
+      "hpMult": 66.542,
+      "dmgMult": 7.067,
+      "goldMult": 9.358,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom"
+      ],
+      "elite": null
+    },
+    {
+      "day": 18,
+      "nightSpawnCount": 193,
+      "hpMult": 86.504,
+      "dmgMult": 7.986,
+      "goldMult": 10.761,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre"
+      ],
+      "elite": null
+    },
+    {
+      "day": 19,
+      "nightSpawnCount": 202,
+      "hpMult": 112.455,
+      "dmgMult": 9.024,
+      "goldMult": 12.375,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre"
+      ],
+      "elite": null
+    },
+    {
+      "day": 20,
+      "nightSpawnCount": 211,
+      "hpMult": 146.192,
+      "dmgMult": 10.197,
+      "goldMult": 14.232,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre"
+      ],
+      "elite": "grey_ogre"
+    },
+    {
+      "day": 21,
+      "nightSpawnCount": 220,
+      "hpMult": 190.05,
+      "dmgMult": 11.523,
+      "goldMult": 16.367,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre"
+      ],
+      "elite": null
+    },
+    {
+      "day": 22,
+      "nightSpawnCount": 229,
+      "hpMult": 247.065,
+      "dmgMult": 13.021,
+      "goldMult": 18.822,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": null
+    },
+    {
+      "day": 23,
+      "nightSpawnCount": 238,
+      "hpMult": 321.184,
+      "dmgMult": 14.714,
+      "goldMult": 21.645,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": null
+    },
+    {
+      "day": 24,
+      "nightSpawnCount": 247,
+      "hpMult": 417.539,
+      "dmgMult": 16.627,
+      "goldMult": 24.891,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": null
+    },
+    {
+      "day": 25,
+      "nightSpawnCount": 256,
+      "hpMult": 542.801,
+      "dmgMult": 18.788,
+      "goldMult": 28.625,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": "wraith_lord"
+    },
+    {
+      "day": 26,
+      "nightSpawnCount": 265,
+      "hpMult": 705.641,
+      "dmgMult": 21.231,
+      "goldMult": 32.919,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": null
+    },
+    {
+      "day": 27,
+      "nightSpawnCount": 274,
+      "hpMult": 917.333,
+      "dmgMult": 23.991,
+      "goldMult": 37.857,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": null
+    },
+    {
+      "day": 28,
+      "nightSpawnCount": 283,
+      "hpMult": 1192.533,
+      "dmgMult": 27.109,
+      "goldMult": 43.535,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": null
+    },
+    {
+      "day": 29,
+      "nightSpawnCount": 292,
+      "hpMult": 1550.293,
+      "dmgMult": 30.633,
+      "goldMult": 50.066,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": null
+    },
+    {
+      "day": 30,
+      "nightSpawnCount": 301,
+      "hpMult": 2015.381,
+      "dmgMult": 34.616,
+      "goldMult": 57.575,
+      "monsters": [
+        "dog",
+        "zombie",
+        "boar",
+        "bugs",
+        "crab",
+        "wolf",
+        "shroom",
+        "ogre",
+        "wraith"
+      ],
+      "elite": "nightmare"
+    }
+  ],
+  "boss": {
+    "id": "blood_moon_lord",
+    "name": "붉은 달의 군주",
+    "desc": "허브의 '보스에 도전하기'로 언제든 도전. 이기면 엔딩, 지면 허브로 돌아오고 날짜는 그대로.",
+    "hp": 21894000,
+    "contactDmg": 137,
+    "projectileDmg": 33,
+    "armor": 40,
+    "speed": 90,
+    "timeLimitSec": 180,
+    "phases": [
+      {
+        "hpAbove": 0.66,
+        "name": "1페이즈: 사냥",
+        "pattern": [
+          "플레이어를 향해 걸어오며 부채꼴 핏방울 8발",
+          "4초마다 짧은 돌진"
+        ]
+      },
+      {
+        "hpAbove": 0.33,
+        "name": "2페이즈: 붉은 달",
+        "pattern": [
+          "화면이 붉어지고 좀비·늑대 무리 소환(10초마다 8마리)",
+          "원형 탄막 16발"
+        ],
+        "dmgMult": 1.2
+      },
+      {
+        "hpAbove": 0.0,
+        "name": "3페이즈: 광폭화",
+        "pattern": [
+          "이동 속도 x1.6",
+          "맵 전체 낙하 공격(경고 원 1초)",
+          "체력 10% 이하에서 공격 속도 x1.5"
+        ],
+        "dmgMult": 1.5
+      }
+    ],
+    "rewardNote": "처치 시 엔딩 화면(총 플레이 일수·처치 수·플레이타임 표시)",
+    "dps": 54.8,
+    "bossDpsNote": "dps = 보스가 플레이어에게 초당 넣는 평균 피해(회피 실력 50% 기준 환산 전). contactDmg/projectileDmg는 실제 패턴용 1회 피해"
+  },
+  "guns": [
+    {
+      "id": "pistol",
+      "name": "P9 권총",
+      "dmg": 10,
+      "fireRate": 3.0,
+      "magazine": 12,
+      "reloadSec": 1.2,
+      "range": 420,
+      "pierce": 0,
+      "pellets": 1,
+      "spreadDeg": 2,
+      "cost": {
+        "gold": 0
+      },
+      "unlockDay": 1
+    },
+    {
+      "id": "revolver",
+      "name": "매그넘 리볼버",
+      "dmg": 48,
+      "fireRate": 1.6,
+      "magazine": 6,
+      "reloadSec": 1.8,
+      "range": 520,
+      "pierce": 1,
+      "pellets": 1,
+      "spreadDeg": 1,
+      "cost": {
+        "gold": 250
+      },
+      "unlockDay": 2
+    },
+    {
+      "id": "smg",
+      "name": "벌처 기관단총",
+      "dmg": 15,
+      "fireRate": 12.0,
+      "magazine": 32,
+      "reloadSec": 1.6,
+      "range": 380,
+      "pierce": 0,
+      "pellets": 1,
+      "spreadDeg": 8,
+      "cost": {
+        "gold": 1000
+      },
+      "unlockDay": 4
+    },
+    {
+      "id": "shotgun",
+      "name": "브루저 산탄총",
+      "dmg": 30,
+      "fireRate": 1.3,
+      "magazine": 6,
+      "reloadSec": 2.4,
+      "range": 300,
+      "pierce": 0,
+      "pellets": 8,
+      "spreadDeg": 30,
+      "cost": {
+        "gold": 3000
+      },
+      "unlockDay": 7
+    },
+    {
+      "id": "rifle",
+      "name": "AR-77 돌격소총",
+      "dmg": 75,
+      "fireRate": 9.0,
+      "magazine": 30,
+      "reloadSec": 2.0,
+      "range": 560,
+      "pierce": 1,
+      "pellets": 1,
+      "spreadDeg": 4,
+      "cost": {
+        "gold": 9000
+      },
+      "unlockDay": 10
+    },
+    {
+      "id": "sniper",
+      "name": "롱샷 저격소총",
+      "dmg": 900,
+      "fireRate": 1.1,
+      "magazine": 5,
+      "reloadSec": 2.2,
+      "range": 900,
+      "pierce": 4,
+      "pellets": 1,
+      "spreadDeg": 0,
+      "cost": {
+        "gold": 25000,
+        "crystal": 5
+      },
+      "unlockDay": 13
+    },
+    {
+      "id": "flamer",
+      "name": "용의 숨결 화염방사기",
+      "dmg": 120,
+      "fireRate": 20.0,
+      "magazine": 100,
+      "reloadSec": 3.0,
+      "range": 260,
+      "pierce": 3,
+      "pellets": 1,
+      "spreadDeg": 20,
+      "cost": {
+        "gold": 50000.0,
+        "crystal": 8
+      },
+      "unlockDay": 16
+    },
+    {
+      "id": "minigun",
+      "name": "토네이도 미니건",
+      "dmg": 200,
+      "fireRate": 25.0,
+      "magazine": 200,
+      "reloadSec": 4.0,
+      "range": 600,
+      "pierce": 1,
+      "pellets": 1,
+      "spreadDeg": 10,
+      "cost": {
+        "gold": 120000.0,
+        "crystal": 12
+      },
+      "unlockDay": 20
+    },
+    {
+      "id": "railgun",
+      "name": "아크 레일건",
+      "dmg": 9000,
+      "fireRate": 1.0,
+      "magazine": 4,
+      "reloadSec": 2.0,
+      "range": 1400,
+      "pierce": 99,
+      "pellets": 1,
+      "spreadDeg": 0,
+      "cost": {
+        "gold": 250000.0,
+        "crystal": 20
+      },
+      "unlockDay": 24
+    }
+  ],
+  "shopUpgrades": [
+    {
+      "id": "power",
+      "cat": "무기 강화",
+      "name": "화력 강화",
+      "desc": "모든 총 피해 +12%/레벨",
+      "stat": "dmgPct",
+      "per": 0.12,
+      "max": 60,
+      "cost": {
+        "gold": [
+          80,
+          1.2
+        ]
+      }
+    },
+    {
+      "id": "rof",
+      "cat": "무기 강화",
+      "name": "연사 개조",
+      "desc": "연사력 +6%/레벨",
+      "stat": "ratePct",
+      "per": 0.06,
+      "max": 25,
+      "cost": {
+        "gold": [
+          150,
+          1.3
+        ]
+      }
+    },
+    {
+      "id": "mag",
+      "cat": "무기 강화",
+      "name": "확장 탄창",
+      "desc": "탄창 +10%/레벨, 재장전 -4%/레벨",
+      "stat": "magPct",
+      "per": 0.1,
+      "max": 15,
+      "cost": {
+        "gold": [
+          120,
+          1.32
+        ]
+      }
+    },
+    {
+      "id": "armor",
+      "cat": "장비",
+      "name": "방탄 조끼",
+      "desc": "최대 체력 +25, 방어 +4/레벨",
+      "stat": "armor",
+      "per": 1,
+      "max": 40,
+      "cost": {
+        "scrap": [
+          40,
+          1.17
+        ]
+      }
+    },
+    {
+      "id": "boots",
+      "cat": "장비",
+      "name": "전술 부츠",
+      "desc": "이동 속도 +5%/레벨",
+      "stat": "speedPct",
+      "per": 0.05,
+      "max": 10,
+      "cost": {
+        "scrap": [
+          60,
+          1.35
+        ]
+      }
+    },
+    {
+      "id": "tools",
+      "cat": "장비",
+      "name": "채집 도구",
+      "desc": "채집 속도 +15%/레벨",
+      "stat": "gatherPct",
+      "per": 0.15,
+      "max": 30,
+      "cost": {
+        "scrap": [
+          50,
+          1.22
+        ]
+      }
+    },
+    {
+      "id": "medkit",
+      "cat": "장비",
+      "name": "응급 키트",
+      "desc": "체력 재생 +0.5/초/레벨",
+      "stat": "regen",
+      "per": 0.5,
+      "max": 20,
+      "cost": {
+        "scrap": [
+          100,
+          1.28
+        ]
+      }
+    }
+  ],
+  "buildings": [
+    {
+      "id": "scrapper",
+      "name": "고철 분쇄기",
+      "desc": "매일 아침 고철 생산",
+      "produces": {
+        "scrap": 30
+      },
+      "cost": {
+        "scrap": [
+          100,
+          1.16
+        ]
+      },
+      "max": 30,
+      "unlockDay": 2
+    },
+    {
+      "id": "shop",
+      "name": "무기 노점",
+      "desc": "매일 아침 골드 생산",
+      "produces": {
+        "gold": 120
+      },
+      "cost": {
+        "scrap": [
+          180,
+          1.2
+        ],
+        "goldMult": 1.15
+      },
+      "max": 30,
+      "unlockDay": 3,
+      "note": "생산 골드는 날짜에 따라 x1.15^(day-1)"
+    },
+    {
+      "id": "turret",
+      "name": "자동 포탑",
+      "desc": "밤에 기지 주변 몬스터 자동 사격",
+      "dps": 25,
+      "cost": {
+        "scrap": [
+          150,
+          1.33
+        ]
+      },
+      "max": 8,
+      "unlockDay": 4,
+      "note": "포탑 피해는 화력 강화·포탑 개량 적용"
+    },
+    {
+      "id": "barricade",
+      "name": "바리케이드",
+      "desc": "몬스터 접근 피해 -7%/개",
+      "dmgReduce": 0.07,
+      "cost": {
+        "scrap": [
+          120,
+          1.45
+        ]
+      },
+      "max": 6,
+      "unlockDay": 3
+    },
+    {
+      "id": "lamp",
+      "name": "조명탑",
+      "desc": "밤 시야 +15%, 치명타 +3%/개",
+      "crit": 0.03,
+      "cost": {
+        "scrap": [
+          250,
+          1.5
+        ]
+      },
+      "max": 5,
+      "unlockDay": 6
+    },
+    {
+      "id": "turretup",
+      "name": "포탑 개량",
+      "desc": "포탑 피해 x1.35/레벨",
+      "turretMult": 1.35,
+      "cost": {
+        "scrap": [
+          300,
+          1.45
+        ],
+        "gold": [
+          500,
+          1.6
+        ]
+      },
+      "max": 12,
+      "unlockDay": 8
+    }
+  ],
+  "skills": [
+    {
+      "id": "s1",
+      "branch": "사격",
+      "name": "침착한 손",
+      "cost": 1,
+      "requires": [],
+      "effect": {
+        "dmgMult": 1.15
+      },
+      "desc": "피해 +15%"
+    },
+    {
+      "id": "s2",
+      "branch": "사격",
+      "name": "속사",
+      "cost": 1,
+      "requires": [
+        "s1"
+      ],
+      "effect": {
+        "rateMult": 1.12
+      },
+      "desc": "연사력 +12%"
+    },
+    {
+      "id": "s3",
+      "branch": "사격",
+      "name": "급소 사격",
+      "cost": 2,
+      "requires": [
+        "s1"
+      ],
+      "effect": {
+        "crit": 0.1
+      },
+      "desc": "치명타 확률 +10%"
+    },
+    {
+      "id": "s4",
+      "branch": "사격",
+      "name": "관통탄",
+      "cost": 2,
+      "requires": [
+        "s2"
+      ],
+      "effect": {
+        "pierce": 1
+      },
+      "desc": "모든 총 관통 +1"
+    },
+    {
+      "id": "s5",
+      "branch": "사격",
+      "name": "치명 강화",
+      "cost": 2,
+      "requires": [
+        "s3"
+      ],
+      "effect": {
+        "critDmg": 0.75
+      },
+      "desc": "치명타 피해 +75%"
+    },
+    {
+      "id": "s6",
+      "branch": "사격",
+      "name": "탄 아끼기",
+      "cost": 3,
+      "requires": [
+        "s4"
+      ],
+      "effect": {
+        "rateMult": 1.2
+      },
+      "desc": "15% 확률로 탄 소모 없음(연사 +20% 환산)"
+    },
+    {
+      "id": "s7",
+      "branch": "사격",
+      "name": "학살자",
+      "cost": 3,
+      "requires": [
+        "s5",
+        "s6"
+      ],
+      "effect": {
+        "dmgMult": 1.4
+      },
+      "desc": "피해 +40%"
+    },
+    {
+      "id": "s8",
+      "branch": "사격",
+      "name": "거인 사냥꾼",
+      "cost": 4,
+      "requires": [
+        "s7"
+      ],
+      "effect": {
+        "bossDmgMult": 1.6
+      },
+      "desc": "엘리트·보스 피해 +60%"
+    },
+    {
+      "id": "v1",
+      "branch": "생존",
+      "name": "튼튼한 몸",
+      "cost": 1,
+      "requires": [],
+      "effect": {
+        "hpFlat": 40
+      },
+      "desc": "최대 체력 +40"
+    },
+    {
+      "id": "v2",
+      "branch": "생존",
+      "name": "구르기",
+      "cost": 1,
+      "requires": [
+        "v1"
+      ],
+      "effect": {
+        "dodge": 0.08
+      },
+      "desc": "스페이스로 구르기, 받는 피해 -8% 환산"
+    },
+    {
+      "id": "v3",
+      "branch": "생존",
+      "name": "흡혈탄",
+      "cost": 2,
+      "requires": [
+        "v1"
+      ],
+      "effect": {
+        "lifesteal": 0.01
+      },
+      "desc": "준 피해의 1%만큼 회복(최대 초당 5)"
+    },
+    {
+      "id": "v4",
+      "branch": "생존",
+      "name": "강철 피부",
+      "cost": 2,
+      "requires": [
+        "v2"
+      ],
+      "effect": {
+        "armorFlat": 30
+      },
+      "desc": "방어 +30"
+    },
+    {
+      "id": "v5",
+      "branch": "생존",
+      "name": "아드레날린",
+      "cost": 2,
+      "requires": [
+        "v3"
+      ],
+      "effect": {
+        "hpMult": 1.25
+      },
+      "desc": "최대 체력 +25%"
+    },
+    {
+      "id": "v6",
+      "branch": "생존",
+      "name": "두 번째 기회",
+      "cost": 3,
+      "requires": [
+        "v4",
+        "v5"
+      ],
+      "effect": {
+        "revive": 1
+      },
+      "desc": "밤마다 1회 체력 50%로 부활"
+    },
+    {
+      "id": "v7",
+      "branch": "생존",
+      "name": "불굴",
+      "cost": 4,
+      "requires": [
+        "v6"
+      ],
+      "effect": {
+        "hpMult": 1.4,
+        "armorFlat": 40
+      },
+      "desc": "최대 체력 +40%, 방어 +40"
+    },
+    {
+      "id": "p1",
+      "branch": "생산",
+      "name": "부지런함",
+      "cost": 1,
+      "requires": [],
+      "effect": {
+        "gatherMult": 1.25
+      },
+      "desc": "채집 속도 +25%"
+    },
+    {
+      "id": "p2",
+      "branch": "생산",
+      "name": "자석 장갑",
+      "cost": 1,
+      "requires": [
+        "p1"
+      ],
+      "effect": {
+        "pickupMult": 2.0,
+        "goldMult": 1.1
+      },
+      "desc": "줍기 범위 x2, 골드 +10%"
+    },
+    {
+      "id": "p3",
+      "branch": "생산",
+      "name": "협상가",
+      "cost": 2,
+      "requires": [
+        "p1"
+      ],
+      "effect": {
+        "shopDiscount": 0.9
+      },
+      "desc": "상점 가격 -10%"
+    },
+    {
+      "id": "p4",
+      "branch": "생산",
+      "name": "현상금 사냥꾼",
+      "cost": 2,
+      "requires": [
+        "p2"
+      ],
+      "effect": {
+        "goldMult": 1.3
+      },
+      "desc": "처치 골드 +30%"
+    },
+    {
+      "id": "p5",
+      "branch": "생산",
+      "name": "공장장",
+      "cost": 2,
+      "requires": [
+        "p3"
+      ],
+      "effect": {
+        "buildingMult": 1.5
+      },
+      "desc": "건물 생산량 +50%"
+    },
+    {
+      "id": "p6",
+      "branch": "생산",
+      "name": "긴 낮",
+      "cost": 3,
+      "requires": [
+        "p4",
+        "p5"
+      ],
+      "effect": {
+        "dayBonusSec": 30
+      },
+      "desc": "낮 시간 +30초"
+    },
+    {
+      "id": "p7",
+      "branch": "생산",
+      "name": "무기 재벌",
+      "cost": 4,
+      "requires": [
+        "p6"
+      ],
+      "effect": {
+        "goldMult": 1.5,
+        "buildingMult": 1.5
+      },
+      "desc": "골드·건물 생산 +50%"
+    }
+  ],
+  "simulation": {
+    "보통": {
+      "bossClearDay": 25,
+      "playtimeMin": 111,
+      "nightDeaths": 0
+    },
+    "서툰 편": {
+      "bossClearDay": 29,
+      "playtimeMin": 132,
+      "nightDeaths": 8
+    },
+    "능숙함": {
+      "bossClearDay": 22,
+      "playtimeMin": 93,
+      "nightDeaths": 0
+    }
+  }
+}

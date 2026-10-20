@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>총 타이쿤 월드 미리보기</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .demo { height: 520px; margin: 12px; }
+  .demo-label { margin: 18px 12px 0; font: 400 20px var(--gt-font-display); color: var(--gt-text-2); }
+  .demo-hub { position: relative; margin: 12px; border-radius: 14px; overflow: hidden; min-height: 0; }
+  .demo-ending { position: relative; height: 640px; margin: 12px; border-radius: 14px; }
+  .demo-ending.gt-ending { position: relative; inset: auto; }
+</style>
+</head>
+<body class="gt">
+
+<div class="demo-label">밤: 몬스터 처치</div>
+<div class="demo">
+  <div class="gt-world" data-phase="night" style="--light-x:45%; --light-y:62%">
+    <div class="gt-world__map gt-world__map--grass" style="transform:translate(-200px,-120px)">
+      <img class="gt-deco" src="icons/node-tree.svg" style="left:300px;top:200px;width:90px;height:90px">
+      <img class="gt-deco" src="icons/node-rock.svg" style="left:900px;top:520px;width:70px;height:70px">
+      <div class="gt-player" style="left:600px;top:440px"><img src="icons/player.svg" alt=""></div>
+      <div class="gt-enemy gt-enemy--zombie" style="left:480px;top:330px"><div class="gt-bar gt-bar--hp" style="--value:70"></div><img src="assets/monster-zombie.png" alt=""></div>
+      <div class="gt-enemy gt-enemy--wolf" style="left:780px;top:360px"><div class="gt-bar gt-bar--hp" style="--value:40"></div><img src="assets/monster-wolf.png" alt=""></div>
+      <div class="gt-enemy gt-enemy--slime" style="left:560px;top:580px"><div class="gt-bar gt-bar--hp" style="--value:90"></div><img src="assets/monster-slime.png" alt=""></div>
+      <div class="gt-enemy gt-enemy--bat" style="left:720px;top:250px"><div class="gt-bar gt-bar--hp" style="--value:100"></div><img src="assets/monster-bat.png" alt=""></div>
+      <div class="gt-enemy gt-enemy--brute" style="left:960px;top:300px"><div class="gt-bar gt-bar--hp" style="--value:85"></div><img src="assets/monster-brute.png" alt=""></div>
+      <div class="gt-float gt-float--crit" style="left:780px;top:320px;animation-iteration-count:infinite">-240!</div>
+    </div>
+    <div class="gt-world__tint"></div><div class="gt-world__fx"></div>
+    <div class="gt-offscreen" style="left:98%;top:30%;--angle:90deg"></div>
+    <div class="gt-offscreen" style="left:6%;top:94%;--angle:-135deg"></div>
+    <div class="gt-overlay">
+      <div class="gt-hud">
+        <div class="gt-clock" data-phase="night"><img class="gt-icon" src="icons/ui-moon.svg" alt=""><span class="gt-clock__day">3일차</span><span class="gt-clock__phase">밤</span><div class="gt-clock__track" style="--t:72"></div></div>
+        <div class="gt-stat"><img class="gt-icon" src="icons/ui-heart.svg" alt=""><div style="width:120px"><div class="gt-bar gt-bar--hp" style="--value:64"></div></div></div>
+        <div class="gt-stat gt-stat--ammo"><img class="gt-icon" src="icons/ui-ammo.svg" alt=""><span class="gt-stat__value">18/30</span></div>
+        <div class="gt-hud__spacer"></div>
+        <div class="gt-stat gt-stat--wave"><span class="gt-stat__label">남은 몬스터</span><span class="gt-stat__value">27</span></div>
+      </div>
+    </div>
+    <div class="gt-minimap"><div class="gt-minimap__view" style="left:30%;top:28%;width:22%;height:24%"></div><span class="gt-minimap__dot gt-minimap__dot--player" style="left:41%;top:40%"></span><span class="gt-minimap__dot gt-minimap__dot--enemy" style="left:38%;top:34%"></span><span class="gt-minimap__dot gt-minimap__dot--enemy" style="left:49%;top:36%"></span><span class="gt-minimap__dot gt-minimap__dot--enemy" style="left:62%;top:30%"></span><span class="gt-minimap__dot gt-minimap__dot--enemy" style="left:20%;top:70%"></span><span class="gt-minimap__dot gt-minimap__dot--node" style="left:70%;top:60%"></span></div>
+    <div class="gt-phase-banner gt-phase-banner--night" style="animation-iteration-count:infinite;animation-duration:5s">밤이 찾아옵니다<small>살아남아라</small></div>
+  </div>
+</div>
+
+<div class="demo-label">낮: 자원 수집</div>
+<div class="demo">
+  <div class="gt-world" data-phase="day">
+    <div class="gt-world__map gt-world__map--grass" style="transform:translate(-100px,-60px)">
+      <div class="gt-node" style="left:300px;top:220px;width:110px;height:110px"><div class="gt-bar" style="--value:0"></div><img src="icons/node-tree.svg" alt=""></div>
+      <div class="gt-node is-harvesting" style="left:520px;top:330px;width:110px;height:110px"><div class="gt-bar" style="--value:55"></div><img src="icons/node-tree.svg" alt=""></div>
+      <div class="gt-node" style="left:820px;top:240px;width:90px;height:90px"><div class="gt-bar"></div><img src="icons/node-rock.svg" alt=""></div>
+      <div class="gt-node" style="left:900px;top:480px;width:90px;height:90px"><div class="gt-bar"></div><img src="icons/node-scrap.svg" alt=""></div>
+      <div class="gt-node is-depleted" style="left:260px;top:480px;width:90px;height:90px"><img src="icons/node-rock.svg" alt=""></div>
+      <img class="gt-pickup" src="icons/res-wood.svg" style="left:600px;top:380px" alt="">
+      <img class="gt-pickup" src="icons/res-crystal.svg" style="left:860px;top:300px" alt="">
+      <div class="gt-player is-left" style="left:590px;top:330px"><img src="icons/player.svg" alt=""></div>
+      <div class="gt-float gt-float--money" style="left:520px;top:260px;animation-iteration-count:infinite">+3 나무</div>
+    </div>
+    <div class="gt-world__tint"></div><div class="gt-world__fx"></div>
+    <div class="gt-overlay">
+      <div class="gt-hud">
+        <div class="gt-clock" data-phase="day"><img class="gt-icon" src="icons/ui-sun.svg" alt=""><span class="gt-clock__day">3일차</span><span class="gt-clock__phase">낮</span><div class="gt-clock__track" style="--t:22"></div></div>
+        <span class="gt-res"><img src="icons/res-wood.svg" alt="">142</span>
+        <span class="gt-res"><img src="icons/res-stone.svg" alt="">87</span>
+        <span class="gt-res"><img src="icons/res-scrap.svg" alt="">35</span>
+        <span class="gt-res"><img src="icons/res-crystal.svg" alt="">6</span>
+        <div class="gt-hud__spacer"></div>
+        <div class="gt-stat gt-stat--money"><img class="gt-icon" src="icons/ui-coin.svg" alt=""><span class="gt-stat__value">4,820</span></div>
+      </div>
+    </div>
+    <div class="gt-minimap"><div class="gt-minimap__view" style="left:20%;top:18%;width:22%;height:24%"></div><span class="gt-minimap__dot gt-minimap__dot--player" style="left:30%;top:30%"></span><span class="gt-minimap__dot gt-minimap__dot--node" style="left:24%;top:24%"></span><span class="gt-minimap__dot gt-minimap__dot--node" style="left:36%;top:22%"></span><span class="gt-minimap__dot gt-minimap__dot--node" style="left:70%;top:60%"></span><span class="gt-minimap__dot gt-minimap__dot--node" style="left:80%;top:20%"></span></div>
+  </div>
+</div>
+
+<div class="demo-label">보스전</div>
+<div class="demo">
+  <div class="gt-world" data-phase="boss" style="--light-x:50%;--light-y:70%">
+    <div class="gt-world__map gt-world__map--grass" style="transform:translate(-300px,-200px)">
+      <div class="gt-enemy gt-enemy--boss" style="left:740px;top:400px"><img src="assets/monster-boss.png" alt=""></div>
+      <div class="gt-player" style="left:740px;top:600px"><img src="icons/player.svg" alt=""></div>
+    </div>
+    <div class="gt-world__tint"></div><div class="gt-world__fx"></div>
+    <div class="gt-bossbar"><div class="gt-bossbar__name">심연의 군주</div><div class="gt-bar" style="--value:58"></div><div class="gt-bossbar__phase">2단계 · 분노</div></div>
+  </div>
+</div>
+
+<div class="demo-label">허브: 상점과 스킬트리</div>
+<div class="demo-hub">
+  <div class="gt-hub">
+    <div class="gt-backdrop gt-backdrop--hub"></div>
+    <div class="gt-hub__header">
+      <div><div class="gt-hub__day">3일차 생존</div><div class="gt-hub__sub">몬스터 142마리 처치 · 자원 270개 수집</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="gt-res"><img src="icons/ui-coin.svg" alt="">4,820</span><span class="gt-res"><img src="icons/res-wood.svg" alt="">142</span><span class="gt-res"><img src="icons/res-crystal.svg" alt="">6</span><span class="gt-skillpoints">스킬 포인트 3</span></div>
+    </div>
+    <div class="gt-hub__grid">
+      <button class="gt-hub-tile"><img src="icons/gun-rifle.svg" alt=""><span class="gt-hub-tile__title">무기 상점</span><span class="gt-hub-tile__desc">새 총을 사고 강화한다</span></button>
+      <button class="gt-hub-tile"><img src="icons/ui-skill.svg" alt=""><span class="gt-hub-tile__title">스킬트리</span><span class="gt-hub-tile__desc">사격 · 생존 · 채집</span></button>
+      <button class="gt-hub-tile"><img src="icons/ui-factory.svg" alt=""><span class="gt-hub-tile__title">작업대</span><span class="gt-hub-tile__desc">자원으로 탄약과 함정 제작</span></button>
+      <button class="gt-hub-tile gt-hub-tile--next"><img src="icons/ui-sun.svg" alt=""><span class="gt-hub-tile__title">4일차 시작</span><span class="gt-hub-tile__desc">다시 맵으로 나간다</span></button>
+    </div>
+    <div style="margin-top:18px" class="gt-skilltree">
+      <div class="gt-branch gt-branch--gun"><h3 class="gt-branch__title">사격</h3>
+        <button class="gt-skill is-learned"><img src="icons/ui-damage.svg" alt=""><span class="gt-skill__lv">3/3</span><span class="gt-tip"><b>강한 탄환</b><br>피해량 +10% (레벨당)</span></button>
+        <button class="gt-skill is-learned"><img src="icons/ui-firerate.svg" alt=""><span class="gt-skill__lv">1/3</span></button>
+        <button class="gt-skill is-available"><img src="icons/ui-crit.svg" alt=""><span class="gt-skill__lv">0/3</span></button>
+      </div>
+      <div class="gt-branch gt-branch--survive"><h3 class="gt-branch__title">생존</h3>
+        <button class="gt-skill is-learned"><img src="icons/ui-heart.svg" alt=""><span class="gt-skill__lv">2/5</span></button>
+        <button class="gt-skill is-available"><img src="icons/ui-moon.svg" alt=""><span class="gt-skill__lv">0/3</span></button>
+        <button class="gt-skill is-locked"><img src="icons/ui-lock.svg" alt=""></button>
+      </div>
+      <div class="gt-branch gt-branch--gather"><h3 class="gt-branch__title">채집</h3>
+        <button class="gt-skill is-learned"><img src="icons/res-wood.svg" alt=""><span class="gt-skill__lv">2/3</span></button>
+        <button class="gt-skill is-locked"><img src="icons/res-crystal.svg" alt=""></button>
+        <button class="gt-skill is-locked"><img src="icons/ui-worker.svg" alt=""></button>
+      </div>
+    </div>
+    <button class="gt-boss-btn"><img src="icons/ui-skull.svg" alt=""><span>보스에 도전하기<small>패배하면 오늘 모은 자원의 절반을 잃습니다</small></span></button>
+  </div>
+</div>
+
+<div class="demo-label">엔딩</div>
+<div class="gt-ending demo-ending">
+  <div class="gt-backdrop gt-backdrop--ending"></div>
+  <img class="gt-ending__trophy" src="icons/ui-trophy.svg" alt="">
+  <h1 class="gt-ending__title">새벽이 밝았다</h1>
+  <p class="gt-ending__sub">심연의 군주를 쓰러뜨리고 마침내 살아남았습니다.</p>
+  <div class="gt-ending__stats">
+    <div class="gt-ending__stat"><b>12일</b><span>생존</span></div>
+    <div class="gt-ending__stat"><b>3,481</b><span>처치한 몬스터</span></div>
+    <div class="gt-ending__stat"><b>1:58:24</b><span>플레이 시간</span></div>
+    <div class="gt-ending__stat"><b>레이저 소총</b><span>주력 무기</span></div>
+  </div>
+  <button class="gt-btn gt-btn--primary">처음부터 다시</button>
+</div>
+</body>
+</html>
